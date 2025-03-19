@@ -1,7 +1,6 @@
-package org.entities;
+package com.example.demo.entities;
 
 import jakarta.persistence.*;
-import org.apache.catalina.User;
 
 import java.util.Date;
 
