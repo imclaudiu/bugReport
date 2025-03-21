@@ -1,12 +1,14 @@
-package org.entities;
+package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "username")
     private String username;
@@ -29,7 +31,7 @@ public class Users {
     @Column(name = "isBanned")
     private boolean isBanned;
 
-    public Users(int id, String username, String email, String password, String phone, float score, boolean isModerator, boolean isBanned) {
+    public Users(Long id, String username, String email, String password, String phone, float score, boolean isModerator, boolean isBanned) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -43,11 +45,11 @@ public class Users {
     public Users() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -103,7 +105,7 @@ public class Users {
         return isBanned;
     }
 
-    public void setBanned(boolean banned) {
-        isBanned = banned;
+    public void setBanned(boolean isBanned) {
+        this.isBanned = isBanned;
     }
 }
