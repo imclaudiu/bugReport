@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -104,7 +105,7 @@ public class Users {
         return isBanned;
     }
 
-    public void setBanned(boolean banned) {
-        isBanned = banned;
+    public void setBanned(boolean isBanned) {
+        this.isBanned = isBanned;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -8,41 +9,46 @@ import java.util.Date;
 @Table(name = "Comment")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bugId", nullable = false)
     private Bug bug;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "authorId", nullable = false)
     private Users author;
 
     @Column(name = "text")
     private String text;
 
-    private Date date;
+    @Column(name = "creationDate")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date creationDate;
+    @Column(name = "imageURL")
     private String imageURL;
+    @Column(name = "voteCount")
     private int voteCount;
 
-    public Comment(int id, Bug bug, Users author, String text, Date date, String imageURL, int voteCount) {
+    public Comment(Long id, Bug bug, Users author, String text, Date date, String imageURL, int voteCount) {
         this.id = id;
         this.bug = bug;
         this.author = author;
         this.text = text;
-        this.date = date;
+        this.creationDate = date;
         this.imageURL = imageURL;
         this.voteCount = voteCount;
     }
 
     public Comment() {}
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -71,11 +77,11 @@ public class Comment {
     }
 
     public Date getDate() {
-        return date;
+        return creationDate;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.creationDate = date;
     }
 
     public String getImageURL() {
