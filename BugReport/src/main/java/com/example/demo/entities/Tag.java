@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Tag")
-public class Tag {
+public class  Tag {
     @Id
     @GeneratedValue
     private int id;

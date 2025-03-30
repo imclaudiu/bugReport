@@ -8,7 +8,8 @@ import java.util.Date;
 @Table(name = "Bug")
 public class Bug {
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "authorId", nullable = false)
@@ -32,7 +33,7 @@ public class Bug {
     @Column(name = "voteCount")
     private int voteCount;
 
-    public Bug(int id, Users author, String title, String description, Date creationDate, String imageURL, String status, int voteCount) {
+    public Bug(Long id, Users author, String title, String description, Date creationDate, String imageURL, String status, int voteCount) {
         this.id = id;
         this.author = author;
         this.title = title;
@@ -49,11 +50,11 @@ public class Bug {
 
     public Bug(){}
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

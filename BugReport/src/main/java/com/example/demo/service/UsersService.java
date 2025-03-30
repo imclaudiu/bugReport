@@ -4,63 +4,90 @@ import com.example.demo.entities.Users;
 import com.example.demo.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.server.ResponseStatusException;
+import com.example.demo.entities.Users;
 
 import java.util.List;
 import java.util.Optional;
+
+
+/**
+ * In clasa UsersService a fost implementata logica pentru adaugarea, preluarea, updatarea,
+ * respectiv stergerea datelor din tabelul Users.
+ * In aceasta clasa se apeleaza repository-ul pentru a lucra cu baza de date.
+ */
 
 @Service
 public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     public Users addUser(Users user) {
-//        if(usersRepository.existsById(user.getId()))
-//        {
-//            throw new RuntimeException("User already exists");
-//        }
-        String HashedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(HashedPassword);
-
-        return this.usersRepository.save(user);
+        try{
+            String HashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            user.setPassword(HashedPassword);
+            return this.usersRepository.save(user);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.IM_USED, e.getMessage());
+        }
     }
 
-    public Optional<Users> findUserByEmail(String email) {
-        return this.usersRepository.findByEmail(email);
-    }
-
-    public boolean existsUserByEmail(String email) {
-        return this.usersRepository.existsByEmail(email);
-    }
 
     public Users getUserById(Long id) {
         Optional <Users> user = this.usersRepository.findById(id);
-        return user.orElse(null);
+        if(!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        else
+            return user.get();
     }
 
     public List<Users> getAllUsers() {
         List<Users> users = (List<Users>) this.usersRepository.findAll();
+        if(users.isEmpty()) {
+            throw new  ResponseStatusException(HttpStatus.NOT_FOUND, "Users not found");
+        }
         return users;
     }
 
     @Transactional
-    public Users updateUser(Users user) {
-        return this.usersRepository.save(user);}
+    public Users updateUser(Long id, Users user) {
+        Users newUser = this.usersRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        newUser.setUsername(user.getUsername());
+        newUser.setEmail(user.getEmail());
+        String HashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        newUser.setPassword(HashedPassword);
+        newUser.setPhone(user.getPhone());
+        newUser.setScore(user.getScore());
+        newUser.setModerator(user.isModerator());
+        newUser.setBanned(user.isBanned());
+
+        return this.usersRepository.save(newUser);}
+
+    public Boolean checkPassword(String username, String password) {
+        UsersRepository usersRepository = this.usersRepository;
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return BCrypt.checkpw(password, user.getPassword());
+    }
 
 
     public String deleteUserById(Long id) {
-        try{
+        if(this.usersRepository.existsById(id)) {
             this.usersRepository.deleteById(id);
-            return "User has been deleted";
+            return "User deleted successfully";
         }
-        catch(Exception e){
-            return "Failed to delete user: " + id;
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
 }
