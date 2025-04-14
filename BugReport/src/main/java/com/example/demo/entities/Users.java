@@ -1,12 +1,11 @@
-package com.example.demo.entities;
+package org.entities;
 
 import jakarta.persistence.*;
 
 @Entity
 public class Users {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "username")
@@ -104,7 +103,7 @@ public class Users {
         return isBanned;
     }
 
-    public void setBanned(boolean isBanned) {
-        this.isBanned = isBanned;
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 }

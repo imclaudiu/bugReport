@@ -1,6 +1,7 @@
-package com.example.demo.entities;
+package org.entities;
 
 import jakarta.persistence.*;
+import org.apache.catalina.User;
 
 import java.util.Date;
 
@@ -8,11 +9,10 @@ import java.util.Date;
 @Table(name = "Bug")
 public class Bug {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "authorId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users author;
 
     @Column(name = "title")

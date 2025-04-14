@@ -1,29 +1,29 @@
-package com.example.demo.entities;
+package org.entities;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Tag")
-public class  Tag {
+public class Tag {
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
 
-    public Tag(int id, String name) {
+    public Tag(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
     public Tag(){}
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,4 +1,4 @@
-package com.example.demo.entities;
+package org.entities;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -8,25 +8,25 @@ import java.util.Objects;
 public class BugTagId implements Serializable {
 
     @Column(name = "bugId")
-    private int bugId;
+    private Long bugId;
 
     @Column(name = "tagId")
-    private int tagId;
+    private Long tagId;
 
     // Getters and Setters
-    public int getBugId() {
+    public Long getBugId() {
         return bugId;
     }
 
-    public void setBugId(int bugId) {
+    public void setBugId(Long bugId) {
         this.bugId = bugId;
     }
 
-    public int getTagId() {
+    public Long getTagId() {
         return tagId;
     }
 
-    public void setTagId(int tagId) {
+    public void setTagId(Long tagId) {
         this.tagId = tagId;
     }
 
