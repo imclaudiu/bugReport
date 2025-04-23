@@ -64,6 +64,7 @@ public class BugService {
         return this.bugRepository.save(b);}
 
 
+    @Transactional
     public String deleteBugById(Long id) {
         if(this.bugRepository.existsById(id)) {
             this.bugRepository.deleteById(id);

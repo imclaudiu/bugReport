@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "Vote")
 public class Vote {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
