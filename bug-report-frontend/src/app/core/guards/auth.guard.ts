@@ -13,14 +13,10 @@ export class AuthGuard implements CanActivate {
 
     canActivate(): boolean {
         if (this.authService.isAuthenticated()) {
-            if (this.authService.isBanned()) {
-                this.router.navigate(['/banned']);
-                return false;
-            }
             return true;
         }
-        
-        this.router.navigate(['/login']);
+
+        this.router.navigate(['/auth/login']);
         return false;
     }
 } 

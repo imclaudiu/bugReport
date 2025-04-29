@@ -9,3 +9,8 @@ export interface Vote {
     targetId: number;
     voteType: VoteType;
 }
+
+export interface VoteCreateDto {
+    targetId: number;
+    voteType: VoteType;
+}

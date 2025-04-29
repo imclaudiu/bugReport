@@ -30,11 +30,20 @@ public class UsersService {
 //    private PasswordEncoder passwordEncoder;
 
     public Users addUser(Users user) {
-        try{
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
+        }
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is required");
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is required");
+        }
+        try {
             String HashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(HashedPassword);
             return this.usersRepository.save(user);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.IM_USED, e.getMessage());
         }
     }
@@ -88,5 +97,10 @@ public class UsersService {
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
+    }
+
+    public Users findByEmail(String email) {
+        return this.usersRepository.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

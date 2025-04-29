@@ -1,0 +1,49 @@
+.security-settings-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 24px;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 16px;
+    color: #333;
+    font-size: 18px;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    min-width: 120px;
+
+    mat-spinner {
+      display: inline-block;
+      margin-right: 8px;
+    }
+  }
+}
+
+.coming-soon {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+} 

@@ -6,6 +6,7 @@ import com.example.demo.entities.Users;
 import com.example.demo.service.BugService;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.UsersService;
+import com.example.demo.BugReportApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = BugReportApplication.class)
 @Transactional
 public class EntityRelationshipTest {
 

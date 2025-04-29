@@ -1,0 +1,60 @@
+<div class="security-settings-container">
+  <h2>Security Settings</h2>
+  
+  <div class="section">
+    <h3>Change Password</h3>
+    
+    <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Current Password</mat-label>
+        <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" formControlName="currentPassword">
+        <button mat-icon-button matSuffix (click)="hideCurrentPassword = !hideCurrentPassword" type="button">
+          <mat-icon>{{hideCurrentPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">
+          Current password is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>New Password</mat-label>
+        <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword">
+        <button mat-icon-button matSuffix (click)="hideNewPassword = !hideNewPassword" type="button">
+          <mat-icon>{{hideNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+          New password is required
+        </mat-error>
+        <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm New Password</mat-label>
+        <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+        <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+          <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+          Please confirm your new password
+        </mat-error>
+        <mat-error *ngIf="passwordForm.hasError('mismatch')">
+          Passwords do not match
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid || isLoading">
+          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          <span *ngIf="!isLoading">Change Password</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="section">
+    <h3>Two-Factor Authentication</h3>
+    <p class="coming-soon">Coming soon...</p>
+  </div>
+</div> 

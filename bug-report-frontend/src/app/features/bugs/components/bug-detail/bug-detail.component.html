@@ -1,0 +1,42 @@
+<mat-card class="bug-detail" *ngIf="bug">
+  <mat-card-header>
+    <mat-card-title>{{ bug.title }}</mat-card-title>
+    <mat-card-subtitle>
+      Created: {{ bug.createdAt | date }} | Updated: {{ bug.updatedAt | date }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="status-section">
+      <mat-chip [color]="getStatusColor(bug.status)" selected>
+        Status: {{ bug.status }}
+      </mat-chip>
+      <mat-chip [color]="getPriorityColor(bug.priority)" selected>
+        Priority: {{ bug.priority }}
+      </mat-chip>
+    </div>
+
+    <div class="description-section">
+      <h3>Description</h3>
+      <p>{{ bug.description }}</p>
+    </div>
+
+    <div class="metadata-section">
+      <div class="metadata-item">
+        <span class="label">Reported By:</span>
+        <span class="value">User #{{ bug.createdBy }}</span>
+      </div>
+      <div class="metadata-item" *ngIf="bug.assignedTo">
+        <span class="label">Assigned To:</span>
+        <span class="value">User #{{ bug.assignedTo }}</span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button routerLink="/bugs">Back to List</button>
+    <button mat-raised-button color="primary" [routerLink]="['/bugs', bug.id, 'edit']">
+      Edit Bug
+    </button>
+  </mat-card-actions>
+</mat-card> 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, map } from 'rxjs';
+import { Observable, tap, map, throwError } from 'rxjs';
 import { User } from '../models/user.model';
 import { BaseService } from './base.service';
 
@@ -29,10 +29,11 @@ export class AuthService extends BaseService {
                         isModerator: false,
                         isBanned: false
                     };
-                    localStorage.setItem(this.TOKEN_KEY, username);
-                    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+                    this.setToken(username);
+                    this.setUser(user);
                     return user;
-                })
+                }),
+                tap(() => this.loadUserDetails(username))
             );
     }
 
@@ -40,8 +41,8 @@ export class AuthService extends BaseService {
         return this.http.post<User>(`${this.baseUrl}/users/register`, user)
             .pipe(
                 tap(response => {
-                    localStorage.setItem(this.TOKEN_KEY, response.username);
-                    localStorage.setItem(this.USER_KEY, JSON.stringify(response));
+                    this.setToken(response.username);
+                    this.setUser(response);
                 })
             );
     }
@@ -57,7 +58,7 @@ export class AuthService extends BaseService {
     }
 
     isAuthenticated(): boolean {
-        return !!localStorage.getItem(this.TOKEN_KEY);
+        return !!this.getToken();
     }
 
     isModerator(): boolean {
@@ -68,5 +69,45 @@ export class AuthService extends BaseService {
     isBanned(): boolean {
         const user = this.getCurrentUser();
         return user?.isBanned || false;
+    }
+
+    hasRole(role: string): boolean {
+        const user = this.getCurrentUser();
+        if (!user) return false;
+
+        switch(role) {
+            case 'admin':
+                return user.isModerator;
+            case 'user':
+                return !user.isBanned;
+            default:
+                return false;
+        }
+    }
+
+    private setToken(token: string): void {
+        localStorage.setItem(this.TOKEN_KEY, token);
+    }
+
+    private setUser(user: User): void {
+        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    }
+
+    getToken(): string | null {
+        return localStorage.getItem(this.TOKEN_KEY);
+    }
+
+    private loadUserDetails(username: string): void {
+        this.http.get<User>(`${this.baseUrl}/users/${username}`)
+            .pipe(
+                tap(user => this.setUser(user)),
+                map(() => null)
+            )
+            .subscribe({
+                error: (error) => {
+                    console.error('Failed to load user details:', error);
+                    this.logout();
+                }
+            });
     }
 } 

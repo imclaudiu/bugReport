@@ -1,0 +1,54 @@
+<div class="profile-details" *ngIf="!loading && !error">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div class="avatar-container">
+        <img [src]="user?.avatar || 'assets/default-avatar.png'" alt="Profile avatar" class="avatar">
+      </div>
+      <mat-card-title>{{ user?.firstName }} {{ user?.lastName }}</mat-card-title>
+      <mat-card-subtitle>{{ user?.role }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-section">
+        <div class="info-item">
+          <span class="label">Username</span>
+          <span class="value">{{ user?.username }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Email</span>
+          <span class="value">{{ user?.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Member Since</span>
+          <span class="value">{{ user?.createdAt | date }}</span>
+        </div>
+      </div>
+
+      <div class="activity-section">
+        <h3>Recent Activity</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let activity of activities">
+            <mat-icon matListItemIcon>{{ getActivityIcon(activity.type) }}</mat-icon>
+            <div matListItemTitle>{{ activity.description }}</div>
+            <div matListItemLine>{{ activity.timestamp | date:'medium' }}</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="onEditProfile()">
+        Edit Profile
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<div *ngIf="loading" class="loading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="error" class="error">
+  <mat-error>{{ error }}</mat-error>
+  <button mat-button color="primary" (click)="loadUserProfile()">Retry</button>
+</div> 

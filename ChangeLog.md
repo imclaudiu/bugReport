@@ -37,3 +37,46 @@ ChangeLog - Frontend Setup (29/4/2025)
   - Implementare interceptori pentru autentificare si gestionarea erorilor
   - Adaugare guard-uri pentru protectia rutelor (Auth, Moderator)
 
+ChangeLog - Assignment 3 Status (30/4/2025)
+
+* Status completare Assignment 3 (+2p total):
+  - ⚠️ Frontend Features:
+    * ⚠️ User pages: Implementare partiala, probleme cu autentificare si resetare parola
+    * ⚠️ Answer/Question pages: Implementare partiala, probleme cu incarcarea si crearea bug-urilor
+    * ⚠️ JSON usage: Implementare partiala
+      - ✅ Configurare de baza pentru comunicare JSON
+      - ✅ Interceptori pentru autentificare
+      - ❌ Probleme cu serializarea/deserializarea pentru unele entitati
+      - ❌ Inconsistențe între endpoint-urile frontend și backend
+      - ❌ Lipsă validare pentru răspunsurile JSON
+    * ✅ Modules & Components: Structura modulara implementata corect
+    * ⚠️ Clean Code: Cod partial curat, necesita optimizari
+    * ⚠️ Services: Servicii implementate dar cu probleme de functionare
+    * ❌ Unit Testing: Teste backend complete, teste frontend necesare
+    * ❌ Documentation: Documentatie partiala, necesita completare
+
+* TODO pentru Assignment 3:
+  1. Corectare logica de autentificare si redirecționare
+  2. Implementare sistem real de resetare a parolei
+  3. Debug si corectare a operatiunilor cu bug-uri
+  4. Implementare teste unitare pentru componentele frontend
+  5. Adaugare teste pentru serviciile frontend
+  6. Validare completa a testelor E2E
+  7. Completare documentatie cu arhitectura si stack-ul tehnic
+
+* Probleme identificate si status:
+  - ❌ Autentificare și Redirecționare:
+    * Login-ul cu credențiale valide nu redirecționează către /bugs
+    * Doar înregistrarea (register) redirecționează către /bugs
+    * Necesitate de verificare a logicii de autentificare și redirecționare
+
+  - ❌ Funcționalitate Password Reset:
+    * Funcționalitatea de resetare a parolei este doar mock-up
+    * Necesitate de implementare a sistemului real de resetare a parolei
+    * Soluție propusă: Integrare cu serviciu de email pentru trimiterea link-urilor de reset
+
+  - ❌ Gestionarea Bug-urilor:
+    * Eroare la încărcarea bug-urilor după autentificare
+    * Mesaj de eroare: "Failed to load bugs. Please try again."
+    * Necesitate de investigare a comunicării între frontend și backend pentru operațiunile cu bug-uri
+

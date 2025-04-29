@@ -15,10 +15,11 @@ export interface IBug {
     author: IUser;
     title: string;
     description: string;
-    creationDate?: Date;
+    creationDate: Date;
     imageURL?: string;
     status: string;
     voteCount: number;
+    comments?: IComment[];
 }
 
 export interface IComment {
@@ -26,7 +27,7 @@ export interface IComment {
     bug: IBug;
     author: IUser;
     text: string;
-    date?: Date;
+    creationDate: Date;
     imageURL?: string;
     voteCount: number;
 } 

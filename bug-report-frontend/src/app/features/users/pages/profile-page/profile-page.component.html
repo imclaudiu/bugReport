@@ -1,0 +1,11 @@
+<div class="profile-container">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="!isLoading" class="profile-content">
+    <h1>User Profile</h1>
+    <div class="user-info">
+      <p>Welcome to your profile page!</p>
+    </div>
+  </div>
+</div> 
