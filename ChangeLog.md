@@ -28,3 +28,12 @@ ChangeLog - Liviu
 * Am adaugat cascade operations pentru a mentine consistenta datelor
 * Am implementat orphanRemoval pentru a preveni comentarii orfane in baza de date
 
+ChangeLog - Frontend Setup (29/4/2025)
+
+* Am creat structura de baza a aplicatiei Angular:
+  - Configurare proiect cu Angular CLI
+  - Implementare modele pentru entitati (User, Bug, Comment, Tag)
+  - Creare servicii pentru comunicarea cu backend-ul (Auth, Bug, Comment)
+  - Implementare interceptori pentru autentificare si gestionarea erorilor
+  - Adaugare guard-uri pentru protectia rutelor (Auth, Moderator)
+

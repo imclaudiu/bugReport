@@ -1,4 +1,4 @@
-package com.example.demo;
+package org.example.bugreport;
 
 import com.example.demo.entities.Bug;
 import com.example.demo.entities.Comment;
