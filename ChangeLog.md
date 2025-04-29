@@ -49,11 +49,9 @@ ChangeLog - Assignment 3 Status (30/4/2025)
       - ❌ Probleme cu serializarea/deserializarea pentru unele entitati
       - ❌ Inconsistențe între endpoint-urile frontend și backend
       - ❌ Lipsă validare pentru răspunsurile JSON
-    * ✅ Modules & Components: Structura modulara implementata corect
-    * ⚠️ Clean Code: Cod partial curat, necesita optimizari
     * ⚠️ Services: Servicii implementate dar cu probleme de functionare
-    * ❌ Unit Testing: Teste backend complete, teste frontend necesare
-    * ❌ Documentation: Documentatie partiala, necesita completare
+    * ❌ Unit Testing
+    * ❌ Documentation
 
 * TODO pentru Assignment 3:
   1. Corectare logica de autentificare si redirecționare
@@ -61,8 +59,7 @@ ChangeLog - Assignment 3 Status (30/4/2025)
   3. Debug si corectare a operatiunilor cu bug-uri
   4. Implementare teste unitare pentru componentele frontend
   5. Adaugare teste pentru serviciile frontend
-  6. Validare completa a testelor E2E
-  7. Completare documentatie cu arhitectura si stack-ul tehnic
+  6. Completare documentatie cu arhitectura si stack-ul tehnic
 
 * Probleme identificate si status:
   - ❌ Autentificare și Redirecționare:
