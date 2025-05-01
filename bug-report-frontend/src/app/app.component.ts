@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LayoutComponent } from './core/layout/layout.component';
 import { AuthService } from './core/services/auth.service';
+import { Subscription, filter } from 'rxjs';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-root',
@@ -15,21 +17,50 @@ import { AuthService } from './core/services/auth.service';
     <router-outlet *ngIf="!isLoggedIn"></router-outlet>
   `
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoggedIn = false;
+  private authSubscription: Subscription = new Subscription();
+  private routerSubscription: Subscription = new Subscription();
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private overlayContainer: OverlayContainer
+  ) {}
 
   ngOnInit() {
-    // Check initial auth state
+    // Set initial auth state
     this.isLoggedIn = this.authService.isAuthenticated();
     
     // Subscribe to auth state changes
-    this.authService.isAuthenticated$.subscribe(
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(
       isAuthenticated => {
-        console.log('Auth state changed:', isAuthenticated);
         this.isLoggedIn = isAuthenticated;
       }
     );
+
+    // Subscribe to router events
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Force change detection after navigation
+      setTimeout(() => {
+        this.isLoggedIn = this.authService.isAuthenticated();
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    // Ensure overlay container is properly initialized
+    this.overlayContainer.getContainerElement().classList.add('cdk-overlay-container');
+  }
+
+  ngOnDestroy() {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 }

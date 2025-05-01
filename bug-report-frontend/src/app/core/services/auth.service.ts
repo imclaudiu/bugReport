@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, map, throwError } from 'rxjs';
+import { Observable, tap, map, throwError, BehaviorSubject, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { BaseService } from './base.service';
 
@@ -10,9 +10,16 @@ import { BaseService } from './base.service';
 export class AuthService extends BaseService {
     private readonly TOKEN_KEY = 'token';
     private readonly USER_KEY = 'user';
+    private authState = new BehaviorSubject<boolean>(false);
 
     constructor(http: HttpClient) {
         super(http);
+        // Initialize auth state from localStorage
+        this.authState.next(this.isAuthenticated());
+    }
+
+    get isAuthenticated$(): Observable<boolean> {
+        return this.authState.asObservable();
     }
 
     login(username: string, password: string): Observable<User> {
@@ -22,10 +29,9 @@ export class AuthService extends BaseService {
                     if (!isValid) {
                         throw new Error('Invalid credentials');
                     }
-                    // Since backend doesn't return token, we'll use username as temporary token
                     const user: User = {
                         username,
-                        email: '', // Will be filled after getting user details
+                        email: '',
                         isModerator: false,
                         isBanned: false
                     };
@@ -33,7 +39,10 @@ export class AuthService extends BaseService {
                     this.setUser(user);
                     return user;
                 }),
-                tap(() => this.loadUserDetails(username))
+                tap(user => {
+                    this.authState.next(true);
+                    this.loadUserDetails(username);
+                })
             );
     }
 
@@ -43,6 +52,7 @@ export class AuthService extends BaseService {
                 tap(response => {
                     this.setToken(response.username);
                     this.setUser(response);
+                    this.authState.next(true);
                 })
             );
     }
@@ -50,6 +60,7 @@ export class AuthService extends BaseService {
     logout(): void {
         localStorage.removeItem(this.TOKEN_KEY);
         localStorage.removeItem(this.USER_KEY);
+        this.authState.next(false);
     }
 
     getCurrentUser(): User | null {
@@ -100,7 +111,10 @@ export class AuthService extends BaseService {
     private loadUserDetails(username: string): void {
         this.http.get<User>(`${this.baseUrl}/users/${username}`)
             .pipe(
-                tap(user => this.setUser(user)),
+                tap(user => {
+                    this.setUser(user);
+                    this.authState.next(true);
+                }),
                 map(() => null)
             )
             .subscribe({

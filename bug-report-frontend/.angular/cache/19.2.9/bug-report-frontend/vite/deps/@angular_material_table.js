@@ -4,7 +4,7 @@ import {
 import {
   ScrollingModule,
   ViewportRuler
-} from "./chunk-6UYXUYZD.js";
+} from "./chunk-VTJRI7NS.js";
 import {
   DataSource,
   _RecycleViewRepeaterStrategy,
@@ -12,23 +12,25 @@ import {
   _ViewRepeaterOperation,
   isDataSource
 } from "./chunk-HVWLZQFS.js";
-import "./chunk-SVVIGFXE.js";
-import "./chunk-IJ3KGSPX.js";
+import "./chunk-423XTETU.js";
 import {
   MatCommonModule
-} from "./chunk-P2IYHNSH.js";
+} from "./chunk-SKMRRETA.js";
+import "./chunk-HPFXR5VB.js";
+import "./chunk-NAZ2E3T5.js";
 import "./chunk-TITWNDOM.js";
+import "./chunk-IJ3KGSPX.js";
+import {
+  Directionality
+} from "./chunk-7P5WSSQN.js";
 import {
   Platform,
   _isNumberValue
-} from "./chunk-P2DWXHWH.js";
-import {
-  Directionality
-} from "./chunk-3XNLO2AC.js";
-import "./chunk-4T6ITH4S.js";
+} from "./chunk-UIPE5V3J.js";
+import "./chunk-VOSIYPZB.js";
 import {
   DOCUMENT
-} from "./chunk-3OYSNEPK.js";
+} from "./chunk-NEGS3YYM.js";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,

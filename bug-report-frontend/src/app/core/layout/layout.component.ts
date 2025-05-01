@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, NavigationEnd, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-layout',
@@ -88,10 +89,12 @@ import { Router } from '@angular/router';
     }
 
     .logo {
-      color: white;
+      color: black;
       text-decoration: none;
       font-size: 1.2rem;
       font-weight: 500;
+      display: flex;
+      align-items: center;
     }
 
     .right-section {
@@ -115,13 +118,59 @@ import { Router } from '@angular/router';
         padding: 16px;
       }
     }
+
+    mat-icon {
+      color: black;
+    }
   `]
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
+  private authSubscription: Subscription = new Subscription();
+  private routerSubscription: Subscription = new Subscription();
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private overlayContainer: OverlayContainer
   ) {}
+
+  ngOnInit() {
+    // Subscribe to auth state changes
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
+      if (!isAuthenticated) {
+        this.router.navigate(['/auth/login']);
+      }
+    });
+
+    // Subscribe to router events
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Force change detection after navigation
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    // Ensure overlay container is properly initialized
+    this.overlayContainer.getContainerElement().classList.add('cdk-overlay-container');
+    // Force change detection after view initialization
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
 
   logout(): void {
     this.authService.logout();

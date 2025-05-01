@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export abstract class BaseService {
-    protected baseUrl = 'http://localhost:8080/api'; // Update this with your backend URL
+    protected baseUrl = 'http://localhost:8080'; // Update this with your backend URL
 
     constructor(protected http: HttpClient) {}
 

@@ -72,9 +72,11 @@ export class LoginComponent {
   onLogin(userData: { username: string; password: string }) {
     this.authService.login(userData.username, userData.password)
       .subscribe({
-        next: () => {
-          // Redirect to home page after successful login
-          this.router.navigate(['/']);
+        next: (user) => {
+          if (user) {
+            // Redirect to home page after successful login
+            this.router.navigate(['/']);
+          }
         },
         error: (error) => {
           console.error('Login failed:', error);

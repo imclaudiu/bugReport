@@ -58,6 +58,11 @@ public class UsersService {
             return user.get();
     }
 
+    public Users getUserByUsername(String username) {
+        return this.usersRepository.findByUsername(username)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
     public List<Users> getAllUsers() {
         List<Users> users = (List<Users>) this.usersRepository.findAll();
         if(users.isEmpty()) {

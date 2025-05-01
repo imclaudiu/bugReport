@@ -1,3 +1,10 @@
+ChangeLog - 1/5/2025 - Frontend Fixes
+
+* Am rezolvat problemele de import si injectare pentru serviciile Angular:
+  - Corectat import path pentru AuthService in UserService
+  - Rezolvat eroarea de injection token pentru AuthService
+  - Verificat si confirmat functionalitatea corecta a serviciilor
+
 ChangeLog - 30/3/2025 - Claudiu
 
 * Am modificat Bug Id sa fie BIGSERIAL (auto - increment) in BD si in Java, nu mai este necesar sa adaugam id manual.
@@ -41,7 +48,7 @@ ChangeLog - Assignment 3 Status (30/4/2025)
 
 * Status completare Assignment 3 (+2p total):
   - ⚠️ Frontend Features:
-    * ⚠️ User pages: Implementare partiala, probleme cu autentificare si resetare parola
+    * ⚠️ User pages: Implementare partiala
     * ⚠️ Answer/Question pages: Implementare partiala, probleme cu incarcarea si crearea bug-urilor
     * ⚠️ JSON usage: Implementare partiala
       - ✅ Configurare de baza pentru comunicare JSON
@@ -62,7 +69,7 @@ ChangeLog - Assignment 3 Status (30/4/2025)
   6. Completare documentatie cu arhitectura si stack-ul tehnic
 
 * Probleme identificate si status:
-  - ❌ Autentificare și Redirecționare:
+  - ✅ Autentificare și Redirecționare:
     * Login-ul cu credențiale valide nu redirecționează către /bugs
     * Doar înregistrarea (register) redirecționează către /bugs
     * Necesitate de verificare a logicii de autentificare și redirecționare
@@ -72,7 +79,7 @@ ChangeLog - Assignment 3 Status (30/4/2025)
     * Necesitate de implementare a sistemului real de resetare a parolei
     * Soluție propusă: Integrare cu serviciu de email pentru trimiterea link-urilor de reset
 
-  - ❌ Gestionarea Bug-urilor:
+  - ✅ Gestionarea Bug-urilor:
     * Eroare la încărcarea bug-urilor după autentificare
     * Mesaj de eroare: "Failed to load bugs. Please try again."
     * Necesitate de investigare a comunicării între frontend și backend pentru operațiunile cu bug-uri

@@ -7,6 +7,10 @@ export interface User {
   role: string;
   createdAt: Date;
   avatarUrl?: string;
+  phone?: string;
+  score?: number;
+  isModerator: boolean;
+  isBanned: boolean;
 }
 
 export interface UserActivity {

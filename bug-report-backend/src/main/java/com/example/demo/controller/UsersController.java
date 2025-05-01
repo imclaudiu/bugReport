@@ -29,6 +29,11 @@ public class UsersController {
         return this.usersService.getUserById(id);
     }
 
+    @GetMapping("/getUserByUsername/{username}")
+    public Users getUserByUsername(@PathVariable String username) {
+        return this.usersService.getUserByUsername(username);
+    }
+
     @GetMapping("/getAllUsers")
     public List<Users> getAllUsers() {
         return this.usersService.getAllUsers();
@@ -41,13 +46,11 @@ public class UsersController {
 
     @PutMapping("/updateUser/{id}")
     public Users updateUser(@PathVariable Long id, @RequestBody Users user) {
-
-            return this.usersService.updateUser(id, user);
+        return this.usersService.updateUser(id, user);
     }
 
     @GetMapping("/checkPass/{username}/{password}")
     public boolean checkPass(@PathVariable String username, @PathVariable String password) {
-
         return this.usersService.checkPassword(username, password);
     }
 }

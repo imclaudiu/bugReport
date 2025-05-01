@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 export const usersRoutes: Routes = [
   {
     path: 'profile',
-    component: ProfilePageComponent
+    component: ProfileComponent
   },
   {
     path: 'settings',
-    component: SettingsPageComponent
+    component: SettingsComponent
   },
   {
     path: '',
