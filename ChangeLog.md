@@ -44,12 +44,10 @@ ChangeLog - Frontend Setup (29/4/2025)
   - Implementare interceptori pentru autentificare si gestionarea erorilor
   - Adaugare guard-uri pentru protectia rutelor (Auth, Moderator)
 
-ChangeLog - Assignment 2 Status (30/4/2025)
-
-* Status completare Assignment 2 (+2p total):
+ChangeLog - Assignment 2 Status (3/5/2025)
 
 ✅ | Entity Mapping / Similar
-⚠️ | User pages
+✅ | User pages
 ⚠️ | Answer/Question Pages
 ⚠️ | Usage of JSON for Display & Testing / Similar
 ✅ | Usage of Modules & Components/ Similar
@@ -57,14 +55,6 @@ ChangeLog - Assignment 2 Status (30/4/2025)
 ⚠️ | Usage of Services
 ❌ | Unit Testing
 ❌ | Documentation Architecture, tech stack
-
-* TODO pentru Assignment 3:
-  1. Corectare logica de autentificare si redirecționare
-  2. Implementare sistem real de resetare a parolei
-  3. Debug si corectare a operatiunilor cu bug-uri
-  4. Implementare teste unitare pentru componentele frontend
-  5. Adaugare teste pentru serviciile frontend
-  6. Completare documentatie cu arhitectura si stack-ul tehnic
 
 * Probleme identificate si status:
   - ✅ Autentificare și Redirecționare:

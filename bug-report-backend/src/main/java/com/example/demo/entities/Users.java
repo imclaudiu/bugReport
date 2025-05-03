@@ -3,6 +3,7 @@ package com.example.demo.entities;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -22,6 +23,7 @@ public class Users {
     private String password;
 
     @Column(name = "phone")
+    @JsonProperty("phoneNumber")
     private String phone;
 
     @Column(name = "score")

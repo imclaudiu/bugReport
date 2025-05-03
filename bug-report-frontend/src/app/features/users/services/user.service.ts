@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { User, UserSettings, UserSession, UserActivity } from '../models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -26,23 +26,12 @@ export class UserService {
 
   // Profile Management
   getCurrentUser(): Observable<User> {
-    const username = this.authService.getCurrentUser()?.username;
-    if (!username) {
+    const storedUser = localStorage.getItem('currentUser');
+    if (!storedUser) {
       throw new Error('No user is currently logged in');
     }
-    return this.http.get<any>(`${this.apiUrl}/getUserByUsername/${username}`, { 
-      headers: this.getHeaders() 
-    }).pipe(
-      map(response => ({
-        ...response,
-        isModerator: response.moderator,
-        isBanned: response.banned
-      })),
-      tap(user => {
-        // Update the auth service with the latest user data
-        this.authService.setUser(user);
-      })
-    );
+    const user = JSON.parse(storedUser);
+    return of(user);
   }
 
   updateProfile(data: Partial<User>): Observable<User> {
@@ -128,7 +117,19 @@ export class UserService {
   }
 
   updateUser(id: string, user: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/updateUser/${id}`, user, { headers: this.getHeaders() });
+    // Ensure we're sending the correct field names
+    const updatedUser = {
+      ...user,
+      phoneNumber: user.phone,  // Map phone to phoneNumber for the backend
+      phone: undefined  // Remove phone to avoid confusion
+    };
+    return this.http.put<User>(`${this.apiUrl}/updateUser/${id}`, updatedUser, { headers: this.getHeaders() })
+      .pipe(
+        tap(response => {
+          // Update the user in auth service after successful update
+          this.authService.setUser(response);
+        })
+      );
   }
 
   deleteUser(id: string): Observable<void> {

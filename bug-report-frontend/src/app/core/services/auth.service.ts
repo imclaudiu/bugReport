@@ -9,7 +9,7 @@ import { BaseService } from './base.service';
 })
 export class AuthService extends BaseService {
     private readonly TOKEN_KEY = 'token';
-    private readonly USER_KEY = 'user';
+    private readonly USER_KEY = 'currentUser';
     private readonly TOKEN_EXPIRATION_KEY = 'tokenExpiration';
     private authState = new BehaviorSubject<boolean>(false);
     private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -21,7 +21,18 @@ export class AuthService extends BaseService {
         this.authState.next(this.isAuthenticated());
         const storedUser = localStorage.getItem(this.USER_KEY);
         if (storedUser) {
-            this.currentUserSubject.next(JSON.parse(storedUser));
+            try {
+                const user = JSON.parse(storedUser);
+                // Map the fields correctly
+                this.currentUserSubject.next({
+                    ...user,
+                    phone: user.phoneNumber || null,
+                    moderator: user.moderator || false,
+                    banned: user.banned || false
+                });
+            } catch (e) {
+                console.error('Failed to parse stored user:', e);
+            }
         }
     }
 
@@ -35,11 +46,16 @@ export class AuthService extends BaseService {
                 tap(response => {
                     this.handleAuthentication(response);
                 }),
-                map(response => ({
-                    ...response.user,
-                    isModerator: response.user.moderator,
-                    isBanned: response.user.banned
-                }))
+                map(response => {
+                    const user = {
+                        ...response.user,
+                        moderator: response.user.moderator || false,
+                        banned: response.user.banned || false,
+                        phone: response.user.phoneNumber || response.user.phone || null
+                    };
+                    this.setUser(user);
+                    return user;
+                })
             );
     }
 
@@ -88,12 +104,12 @@ export class AuthService extends BaseService {
 
     isModerator(): boolean {
         const user = this.getCurrentUser();
-        return user?.isModerator || false;
+        return user?.moderator || false;
     }
 
     isBanned(): boolean {
         const user = this.getCurrentUser();
-        return user?.isBanned || false;
+        return user?.banned || false;
     }
 
     hasRole(role: string): boolean {
@@ -102,9 +118,9 @@ export class AuthService extends BaseService {
 
         switch(role) {
             case 'admin':
-                return user.isModerator;
+                return user.moderator;
             case 'user':
-                return !user.isBanned;
+                return !user.banned;
             default:
                 return false;
         }
@@ -115,15 +131,30 @@ export class AuthService extends BaseService {
     }
 
     public setUser(user: User): void {
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-        this.currentUserSubject.next(user);
+        // Map the fields correctly
+        const userToStore = {
+            ...user,
+            phone: user.phoneNumber || user.phone || null,  // Try both phoneNumber and phone
+            phoneNumber: undefined  // Remove phoneNumber to avoid confusion
+        };
+        localStorage.setItem(this.USER_KEY, JSON.stringify(userToStore));
+        this.currentUserSubject.next(userToStore);
     }
 
     private handleAuthentication(response: { token: string, user: any, expiresIn: number }): void {
         const expirationDate = new Date(new Date().getTime() + response.expiresIn * 1000);
         this.setToken(response.token);
         localStorage.setItem(this.TOKEN_EXPIRATION_KEY, expirationDate.toISOString());
-        this.setUser(response.user);
+        
+        // Store the user data with proper field mapping
+        const userData = {
+            ...response.user,
+            phone: response.user.phoneNumber || response.user.phone || null,  // Try both phoneNumber and phone
+            phoneNumber: undefined,  // Remove phoneNumber to avoid confusion
+            moderator: response.user.moderator || false,
+            banned: response.user.banned || false
+        };
+        this.setUser(userData);
         this.authState.next(true);
         this.autoLogout(response.expiresIn * 1000);
     }
@@ -138,17 +169,12 @@ export class AuthService extends BaseService {
     }
 
     private loadUserDetails(username: string): void {
-        this.http.get<any>(`${this.baseUrl}/users/getUserByUsername/${username}`, {
+        this.http.get<User>(`${this.baseUrl}/users/getUserByUsername/${username}`, {
             headers: {
                 'Authorization': `Bearer ${this.getToken()}`
             }
         })
             .pipe(
-                map(response => ({
-                    ...response,
-                    isModerator: response.moderator,
-                    isBanned: response.banned
-                })),
                 tap(user => {
                     this.setUser(user);
                     this.authState.next(true);

@@ -4,10 +4,11 @@ export interface IUser {
     username: string;
     email: string;
     password?: string;
-    phone?: string;
-    score?: number;
-    isModerator: boolean;
-    isBanned: boolean;
+    phone: string | null;
+    phoneNumber?: string | null;
+    score: number;
+    moderator: boolean;
+    banned: boolean;
 }
 
 export interface IBug {

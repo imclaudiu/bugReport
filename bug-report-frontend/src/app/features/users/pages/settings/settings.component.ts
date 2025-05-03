@@ -12,6 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -75,7 +78,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
             </mat-form-field>
 
             <div class="button-container">
-              <button mat-button type="button" routerLink="/users/profile" [disabled]="isLoading">Cancel</button>
+              <button mat-button type="button" (click)="onCancel()">Cancel</button>
               <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid || isLoading">
                 <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
                 <span *ngIf="!isLoading">Save Changes</span>
@@ -118,8 +121,10 @@ export class SettingsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private userService: UserService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.settingsForm = this.fb.group({
       email: ['', [Validators.email]],
@@ -130,8 +135,17 @@ export class SettingsComponent implements OnInit {
     }, { validators: this.passwordMatchValidator });
   }
 
-  ngOnInit() {
-    this.user = this.authService.getCurrentUser();
+  ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+    this.user = currentUser;
+    this.initializeForm();
+  }
+
+  initializeForm() {
     if (this.user) {
       this.settingsForm.patchValue({
         email: this.user.email,
@@ -146,8 +160,19 @@ export class SettingsComponent implements OnInit {
     return newPassword === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  onCancel() {
+    this.router.navigate(['/users/profile']);
+  }
+
   async onSubmit() {
     if (this.settingsForm.invalid) return;
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+      this.snackBar.open('No user is currently logged in', 'Close', { duration: 3000 });
+      this.router.navigate(['/auth/login']);
+      return;
+    }
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -156,19 +181,35 @@ export class SettingsComponent implements OnInit {
       }
     });
 
-    const result = await dialogRef.afterClosed().toPromise();
+    const result = await firstValueFrom(dialogRef.afterClosed());
     if (!result) return;
 
     this.isLoading = true;
     try {
-      // Here you would call your service to update the user
-      // For now, we'll simulate a successful update
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const formValue = this.settingsForm.value;
+      const updatedUser: Partial<User> = {
+        email: formValue.email,
+        phone: formValue.phone
+      };
+
+      // Only include password if it's being changed
+      if (formValue.newPassword && formValue.newPassword.length >= 6) {
+        updatedUser.password = formValue.newPassword;
+      }
+
+      // Update user using the service
+      await firstValueFrom(
+        this.userService.updateUser(currentUser.id.toString(), updatedUser)
+      );
       
       this.snackBar.open('Profile updated successfully', 'Close', {
         duration: 3000
       });
+      
+      // Navigate back to profile
+      this.router.navigate(['/users/profile']);
     } catch (error) {
+      console.error('Error updating profile:', error);
       this.snackBar.open('Failed to update profile', 'Close', {
         duration: 3000
       });

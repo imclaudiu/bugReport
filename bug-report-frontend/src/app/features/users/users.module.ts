@@ -17,13 +17,13 @@ import { UserFormComponent } from './components/user-form/user-form.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SettingsComponent } from './pages/settings/settings.component';
-import { usersRoutes } from './users-routing.module';
+import { UsersRoutingModule } from './users-routing.module';
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forChild(usersRoutes),
+    UsersRoutingModule,
     MatDialogModule,
     MatCardModule,
     MatButtonModule,

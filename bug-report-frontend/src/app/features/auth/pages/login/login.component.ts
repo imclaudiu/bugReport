@@ -74,8 +74,8 @@ export class LoginComponent {
       .subscribe({
         next: (user) => {
           if (user) {
-          // Redirect to home page after successful login
-          this.router.navigate(['/']);
+            // Redirect to profile page after successful login
+            this.router.navigate(['/users/profile']);
           }
         },
         error: (error) => {

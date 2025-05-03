@@ -7,9 +7,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/user.model';
+import { User } from '../../../../core/models/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -58,13 +60,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
                 </mat-list-item>
                 <mat-divider></mat-divider>
                 <mat-list-item>
-                  <span matListItemTitle>Role</span>
-                  <span matListItemLine>{{ user?.isModerator ? 'Moderator' : 'User' }}</span>
+                  <mat-icon matListItemIcon>person</mat-icon>
+                  <div matListItemTitle>Role</div>
+                  <div matListItemLine>{{ user?.moderator ? 'Moderator' : 'User' }}</div>
                 </mat-list-item>
                 <mat-divider></mat-divider>
                 <mat-list-item>
-                  <span matListItemTitle>Status</span>
-                  <span matListItemLine>{{ user?.isBanned ? 'Banned' : 'Active' }}</span>
+                  <mat-icon matListItemIcon>block</mat-icon>
+                  <div matListItemTitle>Status</div>
+                  <div matListItemLine>{{ user?.banned ? 'Banned' : 'Active' }}</div>
                 </mat-list-item>
               </mat-list>
             </div>
@@ -78,7 +82,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button color="primary" routerLink="/users/settings">
+          <button mat-button color="primary" (click)="navigateToSettings()">
             <mat-icon>settings</mat-icon>
             Edit Profile
           </button>
@@ -163,47 +167,85 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
-  ngOnInit() {
+  navigateToSettings(): void {
+    this.router.navigate(['/users/settings']);
+  }
+
+  ngOnInit(): void {
     this.loadUserProfile();
   }
 
-  loadUserProfile() {
-    this.isLoading = true;
-    this.error = null;
-    
-    // First try to get the user from localStorage
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
-        this.user = {
-          ...user,
-          isModerator: user.moderator || false,
-          isBanned: user.banned || false
-        };
-        this.isLoading = false;
-      } catch (e) {
-        console.error('Failed to parse stored user:', e);
-      }
+  loadUserProfile(): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.user = {
+        id: currentUser.id || 0,
+        username: currentUser.username,
+        email: currentUser.email,
+        phone: currentUser.phone || null,
+        score: currentUser.score || 0,
+        moderator: currentUser.moderator || false,
+        banned: currentUser.banned || false
+      };
+      this.isLoading = false;
+    } else {
+      // If no user in auth service, try to get it from the server
+      this.userService.getCurrentUser().subscribe({
+        next: (user) => {
+          this.user = {
+            id: user.id || 0,
+            username: user.username,
+            email: user.email,
+            phone: user.phone || null,
+            score: user.score || 0,
+            moderator: user.moderator || false,
+            banned: user.banned || false
+          };
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Failed to load user profile:', error);
+          this.error = 'Failed to load user profile. Please try again.';
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  updateProfile(): void {
+    if (!this.user || !this.user.id) {
+      this.snackBar.open('Cannot update profile: User information is missing', 'Close', { duration: 3000 });
+      return;
     }
 
-    // Then try to get fresh data from the server
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.user = user;
+    this.isLoading = true;
+    const updatedUser = {
+      ...this.user,
+      phoneNumber: this.user.phone,  // Send phone as phoneNumber to the backend
+      phone: undefined  // Remove phone to avoid confusion
+    };
+
+    this.userService.updateUser(this.user.id.toString(), updatedUser).subscribe({
+      next: (response: any) => {  // Use any type to allow phoneNumber field
+        // Map the response back to our user model
+        this.user = {
+          ...response,
+          phone: response.phoneNumber || response.phone || null,  // Try both fields
+          moderator: response.moderator || false,
+          banned: response.banned || false
+        };
         this.isLoading = false;
+        this.snackBar.open('Profile updated successfully!', 'Close', { duration: 3000 });
       },
       error: (error) => {
-        console.error('Failed to load user profile:', error);
-        this.error = 'Failed to load user profile. Please try again.';
+        console.error('Error updating profile:', error);
         this.isLoading = false;
-        // If unauthorized, redirect to login
-        if (error.status === 401) {
-          this.authService.logout();
-        }
+        this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
       }
     });
   }

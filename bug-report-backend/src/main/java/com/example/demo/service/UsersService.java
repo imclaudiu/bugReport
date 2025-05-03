@@ -75,16 +75,32 @@ public class UsersService {
     public Users updateUser(Long id, Users user) {
         Users newUser = this.usersRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        newUser.setUsername(user.getUsername());
-        newUser.setEmail(user.getEmail());
-        String HashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        newUser.setPassword(HashedPassword);
-        newUser.setPhone(user.getPhone());
-        newUser.setScore(user.getScore());
-        newUser.setModerator(user.isModerator());
-        newUser.setBanned(user.isBanned());
+        // Only update fields that are provided
+        if (user.getUsername() != null && !user.getUsername().trim().isEmpty()) {
+            newUser.setUsername(user.getUsername());
+        }
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+            newUser.setEmail(user.getEmail());
+        }
+        if (user.getPassword() != null && !user.getPassword().trim().isEmpty()) {
+            String HashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            newUser.setPassword(HashedPassword);
+        }
+        if (user.getPhone() != null) {
+            newUser.setPhone(user.getPhone());
+        }
+        if (user.getScore() != newUser.getScore()) {
+            newUser.setScore(user.getScore());
+        }
+        if (user.isModerator() != newUser.isModerator()) {
+            newUser.setModerator(user.isModerator());
+        }
+        if (user.isBanned() != newUser.isBanned()) {
+            newUser.setBanned(user.isBanned());
+        }
 
-        return this.usersRepository.save(newUser);}
+        return this.usersRepository.save(newUser);
+    }
 
     public Boolean checkPassword(String username, String password) {
         UsersRepository usersRepository = this.usersRepository;

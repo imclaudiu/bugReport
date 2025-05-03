@@ -3,10 +3,10 @@ export interface User {
   username: string;
   email: string;
   password?: string;
-  phone?: string;
+  phone: string | null;
   score: number;
-  isModerator: boolean;
-  isBanned: boolean;
+  moderator: boolean;
+  banned: boolean;
 }
 
 export interface UserActivity {
