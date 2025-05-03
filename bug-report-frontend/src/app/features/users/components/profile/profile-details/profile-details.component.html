@@ -2,10 +2,10 @@
   <mat-card class="profile-card">
     <mat-card-header>
       <div class="avatar-container">
-        <img [src]="user?.avatar || 'assets/default-avatar.png'" alt="Profile avatar" class="avatar">
+        <mat-icon class="avatar-icon">account_circle</mat-icon>
       </div>
-      <mat-card-title>{{ user?.firstName }} {{ user?.lastName }}</mat-card-title>
-      <mat-card-subtitle>{{ user?.role }}</mat-card-subtitle>
+      <mat-card-title>{{ user?.username }}</mat-card-title>
+      <mat-card-subtitle>{{ user?.isModerator ? 'Moderator' : 'User' }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
@@ -19,8 +19,12 @@
           <span class="value">{{ user?.email }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Member Since</span>
-          <span class="value">{{ user?.createdAt | date }}</span>
+          <span class="label">Phone</span>
+          <span class="value">{{ user?.phone || 'Not provided' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Score</span>
+          <span class="value">{{ user?.score || 0 }}</span>
         </div>
       </div>
 

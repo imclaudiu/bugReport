@@ -44,21 +44,19 @@ ChangeLog - Frontend Setup (29/4/2025)
   - Implementare interceptori pentru autentificare si gestionarea erorilor
   - Adaugare guard-uri pentru protectia rutelor (Auth, Moderator)
 
-ChangeLog - Assignment 3 Status (30/4/2025)
+ChangeLog - Assignment 2 Status (30/4/2025)
 
-* Status completare Assignment 3 (+2p total):
-  - ⚠️ Frontend Features:
-    * ⚠️ User pages: Implementare partiala
-    * ⚠️ Answer/Question pages: Implementare partiala, probleme cu incarcarea si crearea bug-urilor
-    * ⚠️ JSON usage: Implementare partiala
-      - ✅ Configurare de baza pentru comunicare JSON
-      - ✅ Interceptori pentru autentificare
-      - ❌ Probleme cu serializarea/deserializarea pentru unele entitati
-      - ❌ Inconsistențe între endpoint-urile frontend și backend
-      - ❌ Lipsă validare pentru răspunsurile JSON
-    * ⚠️ Services: Servicii implementate dar cu probleme de functionare
-    * ❌ Unit Testing
-    * ❌ Documentation
+* Status completare Assignment 2 (+2p total):
+
+✅ | Entity Mapping / Similar
+⚠️ | User pages
+⚠️ | Answer/Question Pages
+⚠️ | Usage of JSON for Display & Testing / Similar
+✅ | Usage of Modules & Components/ Similar
+✅ | Clean Code
+⚠️ | Usage of Services
+❌ | Unit Testing
+❌ | Documentation Architecture, tech stack
 
 * TODO pentru Assignment 3:
   1. Corectare logica de autentificare si redirecționare

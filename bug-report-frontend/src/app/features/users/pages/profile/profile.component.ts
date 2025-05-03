@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +21,8 @@ import { AuthService } from '../../../../core/services/auth.service';
     MatIconModule,
     MatDividerModule,
     MatListModule,
-    RouterModule
+    RouterModule,
+    MatProgressSpinnerModule
   ],
   template: `
     <div class="profile-container">
@@ -29,7 +31,7 @@ import { AuthService } from '../../../../core/services/auth.service';
           <mat-card-title>User Profile</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div class="profile-info">
+          <div class="profile-info" *ngIf="!isLoading">
             <div class="avatar-section">
               <mat-icon class="avatar-icon">account_circle</mat-icon>
             </div>
@@ -37,12 +39,12 @@ import { AuthService } from '../../../../core/services/auth.service';
               <mat-list>
                 <mat-list-item>
                   <span matListItemTitle>Username</span>
-                  <span matListItemLine>{{ user?.username || 'Loading...' }}</span>
+                  <span matListItemLine>{{ user?.username || 'Not available' }}</span>
                 </mat-list-item>
                 <mat-divider></mat-divider>
                 <mat-list-item>
                   <span matListItemTitle>Email</span>
-                  <span matListItemLine>{{ user?.email || 'Loading...' }}</span>
+                  <span matListItemLine>{{ user?.email || 'Not available' }}</span>
                 </mat-list-item>
                 <mat-divider></mat-divider>
                 <mat-list-item>
@@ -66,6 +68,13 @@ import { AuthService } from '../../../../core/services/auth.service';
                 </mat-list-item>
               </mat-list>
             </div>
+          </div>
+          <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner></mat-spinner>
+          </div>
+          <div class="error-container" *ngIf="error">
+            <p class="error-message">{{ error }}</p>
+            <button mat-button color="primary" (click)="loadUserProfile()">Retry</button>
           </div>
         </mat-card-content>
         <mat-card-actions>
@@ -126,32 +135,75 @@ import { AuthService } from '../../../../core/services/auth.service';
       align-items: center;
       gap: 8px;
     }
+
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 32px;
+    }
+
+    .error-message {
+      color: #f44336;
+      text-align: center;
+    }
   `]
 })
 export class ProfileComponent implements OnInit {
   user: User | null = null;
+  isLoading = true;
+  error: string | null = null;
 
   constructor(
     private userService: UserService,
     private authService: AuthService
-  ) {
-    console.log('ProfileComponent constructor');
-    console.log('Current token:', this.authService.getToken());
-  }
+  ) {}
 
   ngOnInit() {
-    console.log('ProfileComponent ngOnInit');
-    console.log('Making API call to /users/me');
+    this.loadUserProfile();
+  }
+
+  loadUserProfile() {
+    this.isLoading = true;
+    this.error = null;
+    
+    // First try to get the user from localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        this.user = {
+          ...user,
+          isModerator: user.moderator || false,
+          isBanned: user.banned || false
+        };
+        this.isLoading = false;
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
+      }
+    }
+
+    // Then try to get fresh data from the server
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
-        console.log('User data received:', user);
         this.user = user;
+        this.isLoading = false;
       },
       error: (error) => {
-        console.error('Failed to load user details:', error);
-        console.error('Error status:', error.status);
-        console.error('Error message:', error.message);
-        console.error('Error response:', error.error);
+        console.error('Failed to load user profile:', error);
+        this.error = 'Failed to load user profile. Please try again.';
+        this.isLoading = false;
+        // If unauthorized, redirect to login
+        if (error.status === 401) {
+          this.authService.logout();
+        }
       }
     });
   }

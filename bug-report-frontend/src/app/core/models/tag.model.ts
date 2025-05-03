@@ -1,7 +1,6 @@
-export interface Tag {
-    id?: number;
-    name: string;
-}
+import { ITag } from './shared.types';
+
+export interface Tag extends ITag {}
 
 export interface BugTag {
     bugId: number;

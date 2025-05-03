@@ -8,6 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { User } from '../../../../core/models/user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-settings',
@@ -19,7 +23,8 @@ import { User } from '../../../../core/models/user.model';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ],
   template: `
     <div class="settings-container">
@@ -39,12 +44,18 @@ import { User } from '../../../../core/models/user.model';
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Phone</mat-label>
-              <input matInput formControlName="phone">
+              <input matInput formControlName="phone" placeholder="+40 123 456 789">
+              <mat-error *ngIf="settingsForm.get('phone')?.hasError('pattern')">
+                Please enter a valid phone number
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Current Password</mat-label>
               <input matInput formControlName="currentPassword" type="password">
+              <mat-error *ngIf="settingsForm.get('currentPassword')?.hasError('required')">
+                Current password is required
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
@@ -64,9 +75,10 @@ import { User } from '../../../../core/models/user.model';
             </mat-form-field>
 
             <div class="button-container">
-              <button mat-button type="button" routerLink="/users/profile">Cancel</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid">
-                Save Changes
+              <button mat-button type="button" routerLink="/users/profile" [disabled]="isLoading">Cancel</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid || isLoading">
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                <span *ngIf="!isLoading">Save Changes</span>
               </button>
             </div>
           </form>
@@ -92,19 +104,26 @@ import { User } from '../../../../core/models/user.model';
       gap: 16px;
       margin-top: 24px;
     }
+
+    mat-spinner {
+      margin-right: 8px;
+    }
   `]
 })
 export class SettingsComponent implements OnInit {
   settingsForm: FormGroup;
   user: User | null = null;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.settingsForm = this.fb.group({
       email: ['', [Validators.email]],
-      phone: [''],
+      phone: ['', [Validators.pattern(/^\+?[0-9\s-()]+$/)]],
       currentPassword: [''],
       newPassword: ['', [Validators.minLength(6)]],
       confirmPassword: ['']
@@ -116,7 +135,7 @@ export class SettingsComponent implements OnInit {
     if (this.user) {
       this.settingsForm.patchValue({
         email: this.user.email,
-        phone: this.user.phone || ''
+        phone: this.user.phone
       });
     }
   }
@@ -127,10 +146,34 @@ export class SettingsComponent implements OnInit {
     return newPassword === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  onSubmit() {
-    if (this.settingsForm.valid) {
-      // TODO: Implement update user logic
-      console.log('Form submitted:', this.settingsForm.value);
+  async onSubmit() {
+    if (this.settingsForm.invalid) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirm Changes',
+        message: 'Are you sure you want to update your profile?'
+      }
+    });
+
+    const result = await dialogRef.afterClosed().toPromise();
+    if (!result) return;
+
+    this.isLoading = true;
+    try {
+      // Here you would call your service to update the user
+      // For now, we'll simulate a successful update
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      this.snackBar.open('Profile updated successfully', 'Close', {
+        duration: 3000
+      });
+    } catch (error) {
+      this.snackBar.open('Failed to update profile', 'Close', {
+        duration: 3000
+      });
+    } finally {
+      this.isLoading = false;
     }
   }
 } 

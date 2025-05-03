@@ -10,12 +10,19 @@ import { BaseService } from './base.service';
 export class AuthService extends BaseService {
     private readonly TOKEN_KEY = 'token';
     private readonly USER_KEY = 'user';
+    private readonly TOKEN_EXPIRATION_KEY = 'tokenExpiration';
     private authState = new BehaviorSubject<boolean>(false);
+    private currentUserSubject = new BehaviorSubject<User | null>(null);
+    private tokenExpirationTimer: any;
 
     constructor(http: HttpClient) {
         super(http);
         // Initialize auth state from localStorage
         this.authState.next(this.isAuthenticated());
+        const storedUser = localStorage.getItem(this.USER_KEY);
+        if (storedUser) {
+            this.currentUserSubject.next(JSON.parse(storedUser));
+        }
     }
 
     get isAuthenticated$(): Observable<boolean> {
@@ -23,26 +30,16 @@ export class AuthService extends BaseService {
     }
 
     login(username: string, password: string): Observable<User> {
-        return this.http.get<boolean>(`${this.baseUrl}/users/checkPass/${username}/${password}`)
+        return this.http.post<{ token: string, user: any, expiresIn: number }>(`${this.baseUrl}/auth/login`, { username, password })
             .pipe(
-                map(isValid => {
-                    if (!isValid) {
-                        throw new Error('Invalid credentials');
-                    }
-                    const user: User = {
-                        username,
-                        email: '',
-                        isModerator: false,
-                        isBanned: false
-                    };
-                    this.setToken(username);
-                    this.setUser(user);
-                    return user;
+                tap(response => {
+                    this.handleAuthentication(response);
                 }),
-                tap(user => {
-                    this.authState.next(true);
-                    this.loadUserDetails(username);
-                })
+                map(response => ({
+                    ...response.user,
+                    isModerator: response.user.moderator,
+                    isBanned: response.user.banned
+                }))
             );
     }
 
@@ -60,12 +57,29 @@ export class AuthService extends BaseService {
     logout(): void {
         localStorage.removeItem(this.TOKEN_KEY);
         localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_EXPIRATION_KEY);
         this.authState.next(false);
+        this.currentUserSubject.next(null);
+        if (this.tokenExpirationTimer) {
+            clearTimeout(this.tokenExpirationTimer);
+        }
+    }
+
+    getToken(): string | null {
+        const token = localStorage.getItem(this.TOKEN_KEY);
+        const expirationDate = localStorage.getItem(this.TOKEN_EXPIRATION_KEY);
+        if (!token || !expirationDate) {
+            return null;
+        }
+        if (new Date(expirationDate) <= new Date()) {
+            this.logout();
+            return null;
+        }
+        return token;
     }
 
     getCurrentUser(): User | null {
-        const userStr = localStorage.getItem(this.USER_KEY);
-        return userStr ? JSON.parse(userStr) : null;
+        return this.currentUserSubject.value;
     }
 
     isAuthenticated(): boolean {
@@ -100,22 +114,45 @@ export class AuthService extends BaseService {
         localStorage.setItem(this.TOKEN_KEY, token);
     }
 
-    private setUser(user: User): void {
+    public setUser(user: User): void {
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+        this.currentUserSubject.next(user);
     }
 
-    getToken(): string | null {
-        return localStorage.getItem(this.TOKEN_KEY);
+    private handleAuthentication(response: { token: string, user: any, expiresIn: number }): void {
+        const expirationDate = new Date(new Date().getTime() + response.expiresIn * 1000);
+        this.setToken(response.token);
+        localStorage.setItem(this.TOKEN_EXPIRATION_KEY, expirationDate.toISOString());
+        this.setUser(response.user);
+        this.authState.next(true);
+        this.autoLogout(response.expiresIn * 1000);
+    }
+
+    private autoLogout(expirationDuration: number): void {
+        if (this.tokenExpirationTimer) {
+            clearTimeout(this.tokenExpirationTimer);
+        }
+        this.tokenExpirationTimer = setTimeout(() => {
+            this.logout();
+        }, expirationDuration);
     }
 
     private loadUserDetails(username: string): void {
-        this.http.get<User>(`${this.baseUrl}/users/${username}`)
+        this.http.get<any>(`${this.baseUrl}/users/getUserByUsername/${username}`, {
+            headers: {
+                'Authorization': `Bearer ${this.getToken()}`
+            }
+        })
             .pipe(
+                map(response => ({
+                    ...response,
+                    isModerator: response.moderator,
+                    isBanned: response.banned
+                })),
                 tap(user => {
                     this.setUser(user);
                     this.authState.next(true);
-                }),
-                map(() => null)
+                })
             )
             .subscribe({
                 error: (error) => {

@@ -20,6 +20,7 @@ export interface IBug {
     status: string;
     voteCount: number;
     comments?: IComment[];
+    tags?: ITag[];
 }
 
 export interface IComment {
@@ -30,4 +31,9 @@ export interface IComment {
     creationDate: Date;
     imageURL?: string;
     voteCount: number;
+}
+
+export interface ITag {
+    id?: number;
+    name: string;
 } 

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { User, UserSettings, UserSession, UserActivity } from '../models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,19 @@ export class UserService {
     if (!username) {
       throw new Error('No user is currently logged in');
     }
-    return this.http.get<User>(`${this.apiUrl}/getUserByUsername/${username}`, { headers: this.getHeaders() });
+    return this.http.get<any>(`${this.apiUrl}/getUserByUsername/${username}`, { 
+      headers: this.getHeaders() 
+    }).pipe(
+      map(response => ({
+        ...response,
+        isModerator: response.moderator,
+        isBanned: response.banned
+      })),
+      tap(user => {
+        // Update the auth service with the latest user data
+        this.authService.setUser(user);
+      })
+    );
   }
 
   updateProfile(data: Partial<User>): Observable<User> {
@@ -48,11 +61,19 @@ export class UserService {
 
   // Settings Management
   getUserSettings(): Observable<UserSettings> {
-    return this.http.get<UserSettings>(`${this.apiUrl}/me/settings`, { headers: this.getHeaders() });
+    const username = this.authService.getCurrentUser()?.username;
+    if (!username) {
+      throw new Error('No user is currently logged in');
+    }
+    return this.http.get<UserSettings>(`${this.apiUrl}/${username}/settings`, { headers: this.getHeaders() });
   }
 
-  updateSettings(settings: Partial<UserSettings>): Observable<UserSettings> {
-    return this.http.put<UserSettings>(`${this.apiUrl}/me/settings`, settings, { headers: this.getHeaders() });
+  updateSettings(settings: UserSettings): Observable<UserSettings> {
+    const username = this.authService.getCurrentUser()?.username;
+    if (!username) {
+      throw new Error('No user is currently logged in');
+    }
+    return this.http.put<UserSettings>(`${this.apiUrl}/${username}/settings`, settings, { headers: this.getHeaders() });
   }
 
   // Security
@@ -86,6 +107,31 @@ export class UserService {
 
   // Activity
   getUserActivity(): Observable<UserActivity[]> {
-    return this.http.get<UserActivity[]>(`${this.apiUrl}/me/activity`, { headers: this.getHeaders() });
+    const username = this.authService.getCurrentUser()?.username;
+    if (!username) {
+      throw new Error('No user is currently logged in');
+    }
+    return this.http.get<UserActivity[]>(`${this.apiUrl}/${username}/activity`, { headers: this.getHeaders() });
+  }
+
+  // Admin functions
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/getAllUsers`, { headers: this.getHeaders() });
+  }
+
+  getUser(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/getUser/${id}`, { headers: this.getHeaders() });
+  }
+
+  createUser(user: Partial<User>): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, user, { headers: this.getHeaders() });
+  }
+
+  updateUser(id: string, user: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/updateUser/${id}`, user, { headers: this.getHeaders() });
+  }
+
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/deleteUser/${id}`, { headers: this.getHeaders() });
   }
 } 

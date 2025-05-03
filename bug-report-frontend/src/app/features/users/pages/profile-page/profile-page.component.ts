@@ -16,7 +16,7 @@ import { AuthService } from '../../../../core/services/auth.service';
         <div class="user-info">
           <p><strong>Username:</strong> {{ currentUser.username }}</p>
           <p><strong>Email:</strong> {{ currentUser.email }}</p>
-          <p><strong>Role:</strong> {{ currentUser.role }}</p>
+          <p><strong>Role:</strong> {{ currentUser.isModerator ? 'Moderator' : 'User' }}</p>
         </div>
       </div>
     </div>

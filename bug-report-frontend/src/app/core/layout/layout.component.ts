@@ -33,7 +33,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
             <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="User menu">
               <mat-icon>account_circle</mat-icon>
             </button>
-            <mat-menu #menu="matMenu">
+            <mat-menu #menu="matMenu" class="user-menu">
               <button mat-menu-item routerLink="/users/profile">
                 <mat-icon>person</mat-icon>
                 <span>Profile</span>
@@ -121,6 +121,21 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 
     mat-icon {
       color: black;
+    }
+
+    .user-menu {
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .user-menu button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-menu mat-icon {
+      margin-right: 8px;
     }
   `]
 })

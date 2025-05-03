@@ -2,13 +2,9 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role: string;
-  createdAt: Date;
-  avatarUrl?: string;
+  password?: string;
   phone?: string;
-  score?: number;
+  score: number;
   isModerator: boolean;
   isBanned: boolean;
 }
