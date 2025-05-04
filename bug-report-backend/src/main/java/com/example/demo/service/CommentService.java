@@ -96,4 +96,8 @@ public class CommentService {
         return  "Comment with ID: " + id + " has been deleted!";
     }
 
+    public List<Comment> findByBugId(Long bugId) {
+        return commentRepository.findByBugId(bugId);
+    }
+
 }

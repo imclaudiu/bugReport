@@ -98,7 +98,7 @@ export class BugFormComponent implements OnInit {
         author: this.bug?.author || { id: currentUser.id },
         tags: this.tags
       };
-
+      
       this.submitForm.emit(bug);
     }
   }

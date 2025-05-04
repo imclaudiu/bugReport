@@ -11,6 +11,7 @@ import { BugsService } from '../../services/bugs.service';
 import { Bug } from '../../models/bug.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CommentListComponent } from '../comment-list/comment-list.component';
 
 @Component({
   selector: 'app-bug-detail',
@@ -23,7 +24,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatChipsModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    CommentListComponent
   ],
   templateUrl: './bug-detail.component.html',
   styleUrls: ['./bug-detail.component.scss']

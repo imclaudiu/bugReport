@@ -23,23 +23,23 @@
     <div class="description-section">
       <h3 class="section-title">Description</h3>
       <div class="description-content">
-        <p>{{ bug.description }}</p>
+      <p>{{ bug.description }}</p>
       </div>
     </div>
 
     <div class="metadata-section">
       <h3 class="section-title">Bug Information</h3>
       <div class="metadata-grid">
-        <div class="metadata-item">
-          <span class="label">Reported By:</span>
+      <div class="metadata-item">
+        <span class="label">Reported By:</span>
           <span class="value">
             {{ bug.author.username || ('User #' + bug.author.id) || 'Unknown' }}
           </span>
-        </div>
-        <div class="metadata-item" *ngIf="bug.assignedTo">
-          <span class="label">Assigned To:</span>
-          <span class="value">User #{{ bug.assignedTo }}</span>
-        </div>
+      </div>
+      <div class="metadata-item" *ngIf="bug.assignedTo">
+        <span class="label">Assigned To:</span>
+        <span class="value">User #{{ bug.assignedTo }}</span>
+      </div>
       </div>
     </div>
 
@@ -67,3 +67,6 @@
     </button>
   </mat-card-actions>
 </mat-card> 
+
+<!-- Comments Section -->
+<app-comment-list *ngIf="bug && bug.id" [bugId]="bug.id"></app-comment-list> 

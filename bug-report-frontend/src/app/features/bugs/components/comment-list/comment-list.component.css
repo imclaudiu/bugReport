@@ -1,0 +1,40 @@
+.comments-container {
+  margin-top: 2rem;
+}
+
+.comment {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: white;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.comment-content {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.loading, .error, .no-comments {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+}
+
+.error {
+  color: #f44336;
+} 

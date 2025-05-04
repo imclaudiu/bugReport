@@ -29,6 +29,11 @@ public class CommentController {
         return this.commentService.findById(id);
     }
 
+    @GetMapping("/getCommentsByBug/{bugId}")
+    public List<Comment> getCommentsByBug(@PathVariable Long bugId) {
+        return this.commentService.findByBugId(bugId);
+    }
+
     @GetMapping("/getAllComments")
     public List<Comment> getAllComments() {
         return this.commentService.findAll();

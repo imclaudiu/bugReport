@@ -1,0 +1,37 @@
+<form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="comment-form">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ comment ? 'Edit Comment' : 'Add Comment' }}</mat-label>
+    <textarea
+      matInput
+      formControlName="text"
+      rows="3"
+      placeholder="Write your comment here..."
+    ></textarea>
+    <mat-error *ngIf="commentForm.get('text')?.hasError('required')">
+      Comment is required
+    </mat-error>
+  </mat-form-field>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="loading"
+    >
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="commentForm.invalid || loading"
+    >
+      {{ loading ? 'Saving...' : (comment ? 'Update' : 'Post') }}
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+</form> 

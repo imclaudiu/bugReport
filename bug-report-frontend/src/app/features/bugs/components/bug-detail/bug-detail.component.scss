@@ -66,9 +66,9 @@
       background-color: #f8f9fa;
       padding: 1.5rem;
       border-radius: 4px;
-      
-      p {
-        white-space: pre-wrap;
+
+    p {
+      white-space: pre-wrap;
         line-height: 1.6;
         color: #333;
         margin: 0;
@@ -85,20 +85,20 @@
       gap: 1rem;
       background-color: #f8f9fa;
       padding: 1.5rem;
-      border-radius: 4px;
+    border-radius: 4px;
     }
-    
+
     .metadata-item {
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-      
+
       .label {
         font-weight: 500;
         color: #666;
         font-size: 0.9rem;
       }
-      
+
       .value {
         color: #333;
         font-size: 1rem;
