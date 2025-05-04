@@ -1,1 +1,255 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Fix transparency issues in Material components */
+.mat-mdc-menu-panel {
+  background-color: white !important;
+}
+
+.mat-mdc-menu-content {
+  background-color: white !important;
+}
+
+.mat-mdc-select-panel {
+  background-color: white !important;
+}
+
+.mat-mdc-dialog-container {
+  background-color: white !important;
+}
+
+.mat-mdc-tooltip {
+  background-color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Fix header and toolbar transparency */
+.mat-toolbar {
+  background-color: white !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Fix dropdown and select backgrounds */
+.mat-mdc-select-value {
+  background-color: white !important;
+}
+
+/* Fix card backgrounds */
+.mat-mdc-card {
+  background-color: white !important;
+}
+
+/* Fix dialog backgrounds */
+.mat-mdc-dialog-container {
+  background-color: white !important;
+}
+
+/* Fix snackbar backgrounds */
+.mat-mdc-snack-bar-container {
+  background-color: white !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Fix autocomplete panel */
+.mat-mdc-autocomplete-panel {
+  background-color: white !important;
+}
+
+/* Fix tooltip backgrounds */
+.mat-mdc-tooltip {
+  background-color: rgba(0, 0, 0, 0.87) !important;
+  color: white !important;
+}
+
+/* Fix expansion panel backgrounds */
+.mat-expansion-panel {
+  background-color: white !important;
+}
+
+/* Fix bottom sheet backgrounds */
+.mat-mdc-bottom-sheet-container {
+  background-color: white !important;
+}
+
+/* Fix datepicker backgrounds */
+.mat-datepicker-content {
+  background-color: white !important;
+}
+
+/* Fix slide toggle backgrounds */
+.mat-mdc-slide-toggle {
+  background-color: white !important;
+}
+
+/* Fix progress bar backgrounds */
+.mat-mdc-progress-bar {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Fix checkbox backgrounds */
+.mat-mdc-checkbox {
+  background-color: white !important;
+}
+
+/* Fix radio button backgrounds */
+.mat-mdc-radio-button {
+  background-color: white !important;
+}
+
+/* Fix input backgrounds */
+.mat-mdc-form-field {
+  background-color: white !important;
+}
+
+/* Fix table backgrounds */
+.mat-mdc-table {
+  background-color: white !important;
+}
+
+/* Fix paginator backgrounds */
+.mat-mdc-paginator {
+  background-color: white !important;
+}
+
+/* Fix sort header backgrounds */
+.mat-mdc-sort-header {
+  background-color: white !important;
+}
+
+/* Fix tab backgrounds */
+.mat-mdc-tab-group {
+  background-color: white !important;
+}
+
+/* Fix stepper backgrounds */
+.mat-mdc-stepper {
+  background-color: white !important;
+}
+
+/* Fix tree backgrounds */
+.mat-mdc-tree {
+  background-color: white !important;
+}
+
+/* Fix list backgrounds */
+.mat-mdc-list {
+  background-color: white !important;
+}
+
+/* Fix divider backgrounds */
+.mat-divider {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Fix chip backgrounds */
+.mat-mdc-chip {
+  background-color: white !important;
+}
+
+/* Fix badge backgrounds */
+.mat-mdc-badge {
+  background-color: white !important;
+}
+
+/* Fix progress spinner backgrounds */
+.mat-mdc-progress-spinner {
+  background-color: white !important;
+}
+
+/* Fix slide toggle backgrounds */
+.mat-mdc-slide-toggle {
+  background-color: white !important;
+}
+
+/* Fix slider backgrounds */
+.mat-mdc-slider {
+  background-color: white !important;
+}
+
+/* Fix button backgrounds */
+.mat-mdc-button {
+  background-color: white !important;
+}
+
+/* Fix icon button backgrounds */
+.mat-mdc-icon-button {
+  background-color: white !important;
+}
+
+/* Fix fab button backgrounds */
+.mat-mdc-fab {
+  background-color: white !important;
+}
+
+/* Fix mini fab button backgrounds */
+.mat-mdc-mini-fab {
+  background-color: white !important;
+}
+
+/* Fix raised button backgrounds */
+.mat-mdc-raised-button {
+  background-color: white !important;
+}
+
+/* Fix stroked button backgrounds */
+.mat-mdc-stroked-button {
+  background-color: white !important;
+}
+
+/* Fix flat button backgrounds */
+.mat-mdc-flat-button {
+  background-color: white !important;
+}
+
+/* Fix unelevated button backgrounds */
+.mat-mdc-unelevated-button {
+  background-color: white !important;
+}
+
+/* Fix outlined button backgrounds */
+.mat-mdc-outlined-button {
+  background-color: white !important;
+}
+
+/* Fix text button backgrounds */
+.mat-mdc-text-button {
+  background-color: white !important;
+}
+
+/* Fix fab button backgrounds */
+.mat-mdc-fab {
+  background-color: white !important;
+}
+
+/* Fix mini fab button backgrounds */
+.mat-mdc-mini-fab {
+  background-color: white !important;
+}
+
+/* Fix raised button backgrounds */
+.mat-mdc-raised-button {
+  background-color: white !important;
+}
+
+/* Fix stroked button backgrounds */
+.mat-mdc-stroked-button {
+  background-color: white !important;
+}
+
+/* Fix flat button backgrounds */
+.mat-mdc-flat-button {
+  background-color: white !important;
+}
+
+/* Fix unelevated button backgrounds */
+.mat-mdc-unelevated-button {
+  background-color: white !important;
+}
+
+/* Fix outlined button backgrounds */
+.mat-mdc-outlined-button {
+  background-color: white !important;
+}
+
+/* Fix text button backgrounds */
+.mat-mdc-text-button {
+  background-color: white !important;
+}

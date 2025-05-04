@@ -52,8 +52,8 @@ build/
 /tmp
 /out-tsc
 /bazel-out
-./angular/cache
-./bug-report-frontend/.angular/cache
+**/.angular/
+/bug-report-frontend/.angular
 .sass-cache/
 connect.lock
 libpeerconnection.log

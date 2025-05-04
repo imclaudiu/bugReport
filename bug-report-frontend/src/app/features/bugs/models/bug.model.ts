@@ -1,31 +1,30 @@
-import { IUser, IComment } from '../../../core/models/shared.types';
+import { IUser } from '../../../core/models/shared.types';
+import { IComment } from '../../../core/models/shared.types';
 import { Tag } from '../../../core/models/tag.model';
 
 export enum BugStatus {
-  OPEN = 'OPEN',
-  IN_PROGRESS = 'IN_PROGRESS',
-  RESOLVED = 'RESOLVED',
-  CLOSED = 'CLOSED'
+  SOLVED = 'SOLVED',
+  NOT_SOLVED = 'NOT SOLVED'
 }
 
 export enum BugPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  HIGH = 'HIGH'
 }
 
 export interface Bug {
-  id: number;
+  id?: number;
   title: string;
   description: string;
-  status: BugStatus;
-  priority: BugPriority;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: number;
+  status: string;
+  priority: string;
+  creationDate: Date;
+  updatedAt?: Date;
+  author: IUser;
   assignedTo?: number;
-  tags: string[];
+  tags?: string[];
+  imageURL?: string;
   comments: Comment[];
 }
 

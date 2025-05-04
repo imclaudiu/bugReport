@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { BugsService } from '../../services/bugs.service';
 import { Bug } from '../../models/bug.model';
 import { BugFormComponent } from '../../components/bug-form/bug-form.component';
+import { CommonModule } from '@angular/common';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bug-create-page',
@@ -24,22 +26,24 @@ import { BugFormComponent } from '../../components/bug-form/bug-form.component';
     }
   `],
   standalone: true,
-  imports: [BugFormComponent]
+  imports: [CommonModule, BugFormComponent, MatSnackBarModule]
 })
 export class BugCreatePageComponent {
   constructor(
     private router: Router,
-    private bugsService: BugsService
+    private bugsService: BugsService,
+    private snackBar: MatSnackBar
   ) { }
 
   onSubmit(bug: Bug): void {
     this.bugsService.createBug(bug).subscribe({
       next: (createdBug) => {
+        this.snackBar.open('Bug created successfully', 'Close', { duration: 3000 });
         this.router.navigate(['/bugs', createdBug.id]);
       },
       error: (err) => {
         console.error('Error creating bug:', err);
-        // TODO: Show error message to user
+        this.snackBar.open('Failed to create bug. Please try again.', 'Close', { duration: 3000 });
       }
     });
   }

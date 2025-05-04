@@ -133,9 +133,13 @@ export class AuthService extends BaseService {
     public setUser(user: User): void {
         // Map the fields correctly
         const userToStore = {
-            ...user,
-            phone: user.phoneNumber || user.phone || null,  // Try both phoneNumber and phone
-            phoneNumber: undefined  // Remove phoneNumber to avoid confusion
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            phone: user.phoneNumber || user.phone || null,
+            moderator: user.moderator || false,
+            banned: user.banned || false,
+            score: user.score || 0
         };
         localStorage.setItem(this.USER_KEY, JSON.stringify(userToStore));
         this.currentUserSubject.next(userToStore);
@@ -148,11 +152,13 @@ export class AuthService extends BaseService {
         
         // Store the user data with proper field mapping
         const userData = {
-            ...response.user,
-            phone: response.user.phoneNumber || response.user.phone || null,  // Try both phoneNumber and phone
-            phoneNumber: undefined,  // Remove phoneNumber to avoid confusion
+            id: response.user.id,
+            username: response.user.username,
+            email: response.user.email,
+            phone: response.user.phoneNumber || response.user.phone || null,
             moderator: response.user.moderator || false,
-            banned: response.user.banned || false
+            banned: response.user.banned || false,
+            score: response.user.score || 0
         };
         this.setUser(userData);
         this.authState.next(true);

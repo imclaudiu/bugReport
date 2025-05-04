@@ -5,6 +5,7 @@ import { Bug } from '../../models/bug.model';
 import { BugFormComponent } from '../../components/bug-form/bug-form.component';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bug-edit-page',
@@ -44,7 +45,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     }
   `],
   standalone: true,
-  imports: [CommonModule, BugFormComponent, MatProgressSpinnerModule]
+  imports: [CommonModule, BugFormComponent, MatProgressSpinnerModule, MatSnackBarModule]
 })
 export class BugEditPageComponent implements OnInit {
   bug: Bug | null = null;
@@ -54,7 +55,8 @@ export class BugEditPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private bugsService: BugsService
+    private bugsService: BugsService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -64,13 +66,18 @@ export class BugEditPageComponent implements OnInit {
       if (!isNaN(bugId)) {
         this.bugsService.getBugById(bugId).subscribe({
           next: (bug: Bug) => {
-            this.bug = bug;
+            this.bug = {
+              ...bug,
+              creationDate: new Date(bug.creationDate),
+              updatedAt: bug.updatedAt ? new Date(bug.updatedAt) : undefined
+            };
             this.loading = false;
           },
           error: (err: Error) => {
             this.error = 'Error loading bug details';
             this.loading = false;
             console.error('Error loading bug:', err);
+            this.snackBar.open('Failed to load bug details', 'Close', { duration: 3000 });
           }
         });
       } else {
@@ -84,11 +91,12 @@ export class BugEditPageComponent implements OnInit {
     if (this.bug?.id) {
       this.bugsService.updateBug(this.bug.id, bug).subscribe({
         next: (updatedBug) => {
+          this.snackBar.open('Bug updated successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/bugs', updatedBug.id]);
         },
         error: (err) => {
           console.error('Error updating bug:', err);
-          // TODO: Show error message to user
+          this.snackBar.open('Failed to update bug. Please try again.', 'Close', { duration: 3000 });
         }
       });
     }

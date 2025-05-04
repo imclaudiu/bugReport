@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { Bug } from '../models/bug.model';
 
@@ -28,7 +29,13 @@ export class BugsService {
     return this.http.put<Bug>(`${this.apiUrl}/updateBug/${id}`, bug);
   }
 
-  deleteBug(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/deleteBug/${id}`);
+  deleteBug(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/deleteBug/${id}`, { responseType: 'text' })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error deleting bug:', error);
+          return throwError(() => error);
+        })
+      );
   }
 } 
