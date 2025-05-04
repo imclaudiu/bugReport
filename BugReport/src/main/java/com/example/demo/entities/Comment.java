@@ -1,6 +1,5 @@
 package com.example.demo.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -9,27 +8,22 @@ import java.util.Date;
 @Table(name = "Comment")
 public class Comment {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "bugId", nullable = false)
     private Bug bug;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "authorId", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
     private Users author;
 
     @Column(name = "text")
     private String text;
 
-    @Column(name = "creationDate")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date creationDate;
-    @Column(name = "imageURL")
+    private Date date;
     private String imageURL;
-    @Column(name = "voteCount")
     private int voteCount;
 
     public Comment(Long id, Bug bug, Users author, String text, Date date, String imageURL, int voteCount) {
@@ -37,7 +31,7 @@ public class Comment {
         this.bug = bug;
         this.author = author;
         this.text = text;
-        this.creationDate = date;
+        this.date = date;
         this.imageURL = imageURL;
         this.voteCount = voteCount;
     }
@@ -77,11 +71,11 @@ public class Comment {
     }
 
     public Date getDate() {
-        return creationDate;
+        return date;
     }
 
     public void setDate(Date date) {
-        this.creationDate = date;
+        this.date = date;
     }
 
     public String getImageURL() {

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
@@ -19,7 +19,7 @@ public class Vote {
     @Column(name = "voteType")
     private String voteType;
 
-    public Vote(int id, Users user, int targetId, String voteType) {
+    public Vote(Long id, Users user, int targetId, String voteType) {
         this.id = id;
         this.user = user;
         this.targetId = targetId;
@@ -30,11 +30,11 @@ public class Vote {
     }
     public Vote(){}
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
