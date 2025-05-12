@@ -1,0 +1,23 @@
+.comment-form {
+  margin-bottom: 20px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .error-message {
+    margin-top: 10px;
+  }
+
+  mat-card-actions {
+    padding: 16px;
+  }
+
+  button {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+} 

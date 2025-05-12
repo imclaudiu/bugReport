@@ -1,0 +1,49 @@
+<div class="general-settings-container">
+  <h2>General Settings</h2>
+  
+  <form [formGroup]="generalForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Display Name</mat-label>
+      <input matInput formControlName="displayName" placeholder="Enter your display name">
+      <mat-error *ngIf="generalForm.get('displayName')?.hasError('required')">
+        Display name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Enter your email" type="email">
+      <mat-error *ngIf="generalForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="generalForm.get('email')?.hasError('email')">
+        Please enter a valid email address
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Language</mat-label>
+      <mat-select formControlName="language">
+        <mat-option value="en">English</mat-option>
+        <mat-option value="es">Spanish</mat-option>
+        <mat-option value="fr">French</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Theme</mat-label>
+      <mat-select formControlName="theme">
+        <mat-option value="light">Light</mat-option>
+        <mat-option value="dark">Dark</mat-option>
+        <mat-option value="system">System Default</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="generalForm.invalid || isLoading">
+        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+        <span *ngIf="!isLoading">Save Changes</span>
+      </button>
+    </div>
+  </form>
+</div> 

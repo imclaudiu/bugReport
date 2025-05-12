@@ -1,0 +1,72 @@
+<mat-card class="bug-detail" *ngIf="bug">
+  <mat-card-header>
+    <mat-card-title>{{ bug.title }}</mat-card-title>
+    <mat-card-subtitle>
+      <div class="date-info">
+        <span class="date-label">Created:</span>
+        <span class="date-value">{{ bug.creationDate | date:'medium' }}</span>
+        <span *ngIf="bug.updatedAt" class="date-separator">|</span>
+        <span *ngIf="bug.updatedAt" class="date-label">Updated:</span>
+        <span *ngIf="bug.updatedAt" class="date-value">{{ bug.updatedAt | date:'medium' }}</span>
+      </div>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="status-section">
+      <mat-chip [color]="getStatusColor(bug.status)" selected>
+        <mat-icon>bug_report</mat-icon>
+        Status: {{ bug.status }}
+      </mat-chip>
+    </div>
+
+    <div class="description-section">
+      <h3 class="section-title">Description</h3>
+      <div class="description-content">
+      <p>{{ bug.description }}</p>
+      </div>
+    </div>
+
+    <div class="metadata-section">
+      <h3 class="section-title">Bug Information</h3>
+      <div class="metadata-grid">
+      <div class="metadata-item">
+        <span class="label">Reported By:</span>
+          <span class="value">
+            {{ bug.author.username || ('User #' + bug.author.id) || 'Unknown' }}
+          </span>
+      </div>
+      <div class="metadata-item" *ngIf="bug.assignedTo">
+        <span class="label">Assigned To:</span>
+        <span class="value">User #{{ bug.assignedTo }}</span>
+      </div>
+      </div>
+    </div>
+
+    <div class="tags-section" *ngIf="bug.tags && bug.tags.length > 0">
+      <h3 class="section-title">Tags</h3>
+      <mat-chip-grid>
+        <mat-chip-row *ngFor="let tag of bug.tags">
+          {{ tag }}
+        </mat-chip-row>
+      </mat-chip-grid>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button routerLink="/bugs">Back to List</button>
+    <button mat-raised-button color="primary" 
+            *ngIf="canEditBug()"
+            [routerLink]="['/bugs', bug.id, 'edit']">
+      Edit Bug
+    </button>
+    <button mat-raised-button color="warn" 
+            *ngIf="canDeleteBug()"
+            (click)="onDeleteBug()">
+      Delete Bug
+    </button>
+  </mat-card-actions>
+</mat-card> 
+
+<!-- Comments Section -->
+<app-comment-list *ngIf="bug && bug.id" [bugId]="bug.id"></app-comment-list> 

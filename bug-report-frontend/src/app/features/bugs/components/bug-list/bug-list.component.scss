@@ -1,0 +1,155 @@
+.bug-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0;
+    }
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 20px;
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      mat-form-field {
+        flex: 1;
+        min-width: 200px;
+      }
+    }
+  }
+
+  .bug-list {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .bug-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    mat-card-header {
+      margin-bottom: 10px;
+    }
+
+    mat-card-content {
+      p {
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+    }
+
+    .description {
+      color: #666;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tags {
+      margin-bottom: 16px;
+
+      mat-chip {
+        margin-right: 8px;
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+
+      .status-actions {
+        display: flex;
+        gap: 16px;
+
+        mat-form-field {
+          width: 150px;
+        }
+      }
+
+      .vote-actions {
+        display: flex;
+        gap: 8px;
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          mat-icon {
+            &.voted {
+              color: #1976d2;
+            }
+          }
+
+          span {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  .loading, .error, .no-results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bug-list-container {
+    padding: 10px;
+
+    .header {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .filter-card {
+      .filter-row {
+        flex-direction: column;
+        gap: 8px;
+
+        mat-form-field {
+          width: 100%;
+        }
+      }
+    }
+
+    .bug-list {
+      grid-template-columns: 1fr;
+    }
+  }
+} 
