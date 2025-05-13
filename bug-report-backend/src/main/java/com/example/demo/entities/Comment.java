@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -29,12 +30,16 @@ public class Comment {
     private String text;
 
     @Column(name = "creationDate")
-    private Date date;
+    private LocalDateTime date;
+
+    @ManyToOne
+    @JoinColumn(name = "parentCommentId")
+    private Comment parent;
 
     private String imageURL;
     private int voteCount;
 
-    public Comment(Long id, Bug bug, Users author, String text, Date date, String imageURL, int voteCount) {
+    public Comment(Long id, Bug bug, Users author, String text, LocalDateTime date, String imageURL, int voteCount) {
         this.id = id;
         this.bug = bug;
         this.author = author;
@@ -42,6 +47,14 @@ public class Comment {
         this.date = date;
         this.imageURL = imageURL;
         this.voteCount = voteCount;
+    }
+
+    public Comment getParent() {
+        return parent;
+    }
+
+    public void setParent(Comment parent) {
+        this.parent = parent;
     }
 
     public Comment() {}
@@ -78,11 +91,11 @@ public class Comment {
         this.text = text;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

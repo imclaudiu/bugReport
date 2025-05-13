@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,7 +83,7 @@ public class BugServiceTest {
         bug.setAuthor(testUser);
         bug.setTitle("Test Bug");
         bug.setDescription("Test Description");
-        bug.setCreationDate(new Date());
+        bug.setCreationDate(LocalDateTime.now());
         bug.setStatus("NOT SOLVED");
         return bug;
     }

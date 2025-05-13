@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +43,7 @@ public class EntityRelationshipTest {
         bug.setAuthor(savedUser);
         bug.setTitle("Test Bug");
         bug.setDescription("Test Description");
-        bug.setCreationDate(new Date());
+        bug.setCreationDate(LocalDateTime.now());
         bug.setStatus("NOT SOLVED");
         Bug savedBug = bugService.addBug(bug);
 
@@ -62,7 +63,7 @@ public class EntityRelationshipTest {
         bug.setAuthor(savedUser);
         bug.setTitle("Test Bug");
         bug.setDescription("Test Description");
-        bug.setCreationDate(new Date());
+        bug.setCreationDate(LocalDateTime.now());
         bug.setStatus("NOT SOLVED");
         Bug savedBug = bugService.addBug(bug);
 
@@ -71,7 +72,7 @@ public class EntityRelationshipTest {
         comment.setAuthor(savedUser);
         comment.setBug(savedBug);
         comment.setText("Test Comment");
-        comment.setDate(new Date());
+        comment.setDate(LocalDateTime.now());
         Comment savedComment = commentService.addComment(comment);
 
         // Verify relationships
@@ -91,7 +92,7 @@ public class EntityRelationshipTest {
         bug.setAuthor(savedUser);
         bug.setTitle("Test Bug");
         bug.setDescription("Test Description");
-        bug.setCreationDate(new Date());
+        bug.setCreationDate(LocalDateTime.now());
         bug.setStatus("NOT SOLVED");
         Bug savedBug = bugService.addBug(bug);
 
@@ -100,7 +101,7 @@ public class EntityRelationshipTest {
         comment.setAuthor(savedUser);
         comment.setBug(savedBug);
         comment.setText("Test Comment");
-        comment.setDate(new Date());
+        comment.setDate(LocalDateTime.now());
         
         // Add the comment to the bug's comments collection
         savedBug.addComment(comment);

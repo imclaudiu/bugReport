@@ -46,6 +46,12 @@ public class CommentService {
         }
         comment.setAuthor(author);
 
+        if (comment.getParent() != null && comment.getParent().getId() != null) {
+            Comment parent = commentRepository.findById(comment.getParent().getId())
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found for ID: " + comment.getParent().getId()));
+            comment.setParent(parent);
+        }
+
         return commentRepository.save(comment);
     }
 

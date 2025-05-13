@@ -1,0 +1,8 @@
+Modificari:
+1. Ca sa pot rezolva problema cu timpul creeari unui bug si unui comentariu, a trebuit sa schimb dataType ul lui "creationDate" de la Date la LocalDateTime - iar in baza de date din "Date" in "TimeStamp" (A MERS) - am modificat si in script.
+
+2.Adaugat "findByBugIdOrderByDateDesc(bugId)" pentru ordonarea comentarilor (sunt legate prin bugID) si "findAllByOrderByCreationDateDesc()" pentru ordonarea bugurilor (in repository si in service)
+
+3. Am adaugat optiunea de a da reply la un comentariu : Am adaugat atributul parentComment in entitatea Comment, (ofc ca am pus-o si in baza de date - este in script) si am adauugat in CommentService functionalitate (metodat addComment, liniile 49-53) - doar pe backend, urmeaza sa ma lupt cu front-end
+	Pentru frontend:
+

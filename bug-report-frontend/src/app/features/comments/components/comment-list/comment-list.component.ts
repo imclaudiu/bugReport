@@ -42,4 +42,4 @@ export class CommentListComponent implements OnInit {
   onCommentDeleted(commentId: number): void {
     this.comments = this.comments.filter(comment => comment.id !== commentId);
   }
-} 
+}

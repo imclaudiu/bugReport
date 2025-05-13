@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +45,7 @@ public class CommentServiceTest {
         bug.setAuthor(testUser);
         bug.setTitle("Test Bug");
         bug.setDescription("Test Description");
-        bug.setCreationDate(new Date());
+        bug.setCreationDate(LocalDateTime.now());
         bug.setStatus("NOT SOLVED");
         testBug = bugService.addBug(bug);
     }
@@ -95,7 +97,7 @@ public class CommentServiceTest {
         comment.setAuthor(testUser);
         comment.setBug(testBug);
         comment.setText("Test Comment");
-        comment.setDate(new Date());
+        comment.setDate(LocalDateTime.now());
         return comment;
     }
 }

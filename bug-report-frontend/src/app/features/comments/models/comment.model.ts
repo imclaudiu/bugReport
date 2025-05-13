@@ -16,4 +16,4 @@ export interface CommentCreateDto {
 
 export interface CommentUpdateDto {
   content: string;
-} 
+}

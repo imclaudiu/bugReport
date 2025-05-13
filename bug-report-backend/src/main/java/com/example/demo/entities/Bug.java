@@ -5,6 +5,7 @@ import org.apache.catalina.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Bug {
     private String description;
 
     @Column(name = "creationDate")
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @Column(name = "imageURL")
     private String imageURL;
@@ -44,7 +45,7 @@ public class Bug {
     @Column(name = "voteCount")
     private int voteCount;
 
-    public Bug(Long id, Users author, String title, String description, Date creationDate, String imageURL, String status, int voteCount) {
+    public Bug(Long id, Users author, String title, String description, LocalDateTime creationDate, String imageURL, String status, int voteCount) {
         this.id = id;
         this.author = author;
         this.title = title;
@@ -93,11 +94,11 @@ public class Bug {
         this.description = description;
     }
 
-    public Date getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 

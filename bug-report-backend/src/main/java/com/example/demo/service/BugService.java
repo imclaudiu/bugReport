@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class BugService {
 
     public Bug addBug(Bug bug) {
             try {
+
                 return this.bugRepository.save(bug);
             }
             catch (Exception e) {
@@ -75,4 +77,8 @@ public class BugService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bug Not Found!");
         }
     }
+    public List<Bug> getAllBugsSortedByDate() {
+        return bugRepository.findAllByOrderByCreationDateDesc();
+    }
+
 }
