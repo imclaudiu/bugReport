@@ -39,7 +39,7 @@ public class Comment {
     private String imageURL;
     private int voteCount;
 
-    public Comment(Long id, Bug bug, Users author, String text, LocalDateTime date, String imageURL, int voteCount) {
+    public Comment(Long id, Bug bug, Users author, String text, LocalDateTime date, String imageURL, int voteCount, Comment parent) {
         this.id = id;
         this.bug = bug;
         this.author = author;
@@ -47,6 +47,7 @@ public class Comment {
         this.date = date;
         this.imageURL = imageURL;
         this.voteCount = voteCount;
+        this.parent = parent;
     }
 
     public Comment getParent() {
