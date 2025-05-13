@@ -42,4 +42,11 @@ public class BugController {
     public String deleteBug(@PathVariable Long id) {
         return this.bugService.deleteBugById(id);
     }
+
+    @GetMapping("/sortByDate")
+    public List<Bug> sortByDate() {
+        return this.bugService.getAllBugsSortedByDate();
+    }
+
 }
+
