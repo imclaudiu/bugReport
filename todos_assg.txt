@@ -1,0 +1,12 @@
+taguri creare
+progress
+date and time - ✅️
+
+sort by creation date       ✅️
+filtrare prin taguri
+rezolvare creeare de buguri ✅️
+pictures                    ACUM
+reply comments              incercat, nu merge
+
+upvote si downvotes         incercat, o sa mai incerc
+sortare dupa upvotes        intai sa fac aia anterior
