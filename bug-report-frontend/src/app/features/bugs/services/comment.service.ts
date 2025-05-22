@@ -30,7 +30,7 @@ export class CommentService {
     return this.http.get<Comment>(`${this.apiUrl}/getComment/${commentId}`);
   }
 
-  createComment(bugId: number, text: string): Observable<Comment> {
+  createComment(bugId: number, text: string, imageURL: string): Observable<Comment> {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
       return throwError(() => new Error('User must be logged in to comment'));
@@ -38,6 +38,7 @@ export class CommentService {
 
     return this.http.post<Comment>(`${this.apiUrl}/addComment`, {
       text,
+      imageURL,
       bug: { id: bugId },
       author: { id: currentUser.id },
       date: new Date().toISOString(),
@@ -45,7 +46,7 @@ export class CommentService {
     });
   }
 
-  updateComment(commentId: number, bugId: number, text: string): Observable<Comment> {
+  updateComment(commentId: number, bugId: number, text: string, imageURL: string): Observable<Comment> {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
       return throwError(() => new Error('User must be logged in to update comment'));
@@ -53,6 +54,7 @@ export class CommentService {
 
     return this.http.put<Comment>(`${this.apiUrl}/editComment/${commentId}`, {
       text,
+      imageURL,
       date: new Date().toISOString(),
       author: { id: currentUser.id },
       bug: { id: bugId }
@@ -62,4 +64,4 @@ export class CommentService {
   deleteComment(commentId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/deleteComment/${commentId}`, { observe: 'response' });
   }
-} 
+}

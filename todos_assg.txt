@@ -1,11 +1,11 @@
-taguri creare
+taguri creare - next
 progress
 date and time - ✅️
 
 sort by creation date       ✅️
 filtrare prin taguri
 rezolvare creeare de buguri ✅️
-pictures                    ACUM
+pictures                    SA MA BATA DUMNEZEU, A MERS ✅️
 reply comments              incercat, nu merge
 
 upvote si downvotes         incercat, o sa mai incerc

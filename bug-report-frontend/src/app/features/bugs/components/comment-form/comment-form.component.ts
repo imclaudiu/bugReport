@@ -35,7 +35,9 @@ export class CommentFormComponent implements OnInit {
     private commentService: CommentService
   ) {
     this.commentForm = this.fb.group({
-      text: ['', [Validators.required, Validators.minLength(1)]]
+      text: ['', [Validators.required, Validators.minLength(1)]],
+      imageURL: ['']
+
     });
   }
 
@@ -56,10 +58,11 @@ export class CommentFormComponent implements OnInit {
     this.error = null;
 
     const text = this.commentForm.get('text')?.value;
+    const imageURL = this.commentForm.get('imageURL')?.value;
 
     if (this.comment) {
       // Edit existing comment
-      this.commentService.updateComment(this.comment.id, this.bugId, text).subscribe({
+      this.commentService.updateComment(this.comment.id, this.bugId, text, imageURL).subscribe({
         next: (updatedComment) => {
           this.commentSaved.emit(updatedComment);
           this.loading = false;
@@ -71,7 +74,7 @@ export class CommentFormComponent implements OnInit {
       });
     } else {
       // Create new comment
-      this.commentService.createComment(this.bugId, text).subscribe({
+      this.commentService.createComment(this.bugId, text, imageURL).subscribe({
         next: (newComment) => {
           this.commentSaved.emit(newComment);
           this.commentForm.reset();
@@ -85,7 +88,19 @@ export class CommentFormComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.commentForm.get('imageURL')?.setValue(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onCancel(): void {
     this.cancel.emit();
   }
-} 
+}

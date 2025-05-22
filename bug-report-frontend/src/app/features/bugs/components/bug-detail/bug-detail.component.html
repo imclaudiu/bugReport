@@ -27,6 +27,10 @@
       </div>
     </div>
 
+    <div *ngIf="bug.imageURL">
+      <img [src]="bug.imageURL" alt="Bug image" style="max-width: 100%; margin-top: 1rem;">
+    </div>
+
     <div class="metadata-section">
       <h3 class="section-title">Bug Information</h3>
       <div class="metadata-grid">
@@ -55,18 +59,18 @@
 
   <mat-card-actions align="end">
     <button mat-button routerLink="/bugs">Back to List</button>
-    <button mat-raised-button color="primary" 
+    <button mat-raised-button color="primary"
             *ngIf="canEditBug()"
             [routerLink]="['/bugs', bug.id, 'edit']">
       Edit Bug
     </button>
-    <button mat-raised-button color="warn" 
+    <button mat-raised-button color="warn"
             *ngIf="canDeleteBug()"
             (click)="onDeleteBug()">
       Delete Bug
     </button>
   </mat-card-actions>
-</mat-card> 
+</mat-card>
 
 <!-- Comments Section -->
-<app-comment-list *ngIf="bug && bug.id" [bugId]="bug.id"></app-comment-list> 
+<app-comment-list *ngIf="bug && bug.id" [bugId]="bug.id"></app-comment-list>

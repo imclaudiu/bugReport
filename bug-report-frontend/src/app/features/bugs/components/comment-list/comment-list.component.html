@@ -1,25 +1,25 @@
 <div class="comments-container">
   <h3>Comments</h3>
-  
+
   <!-- Add Comment Form -->
   <app-comment-form
     [bugId]="bugId"
     (commentSaved)="onCommentSaved($event)"
   ></app-comment-form>
-  
+
   <div *ngIf="loading" class="loading">
     Loading comments...
   </div>
-  
+
   <div *ngIf="error" class="error">
     {{ error }}
   </div>
-  
+
   <div *ngIf="!loading && !error">
     <div *ngIf="comments.length === 0" class="no-comments">
       No comments yet. Be the first to comment!
     </div>
-    
+
     <div *ngFor="let comment of comments" class="comment">
       <div *ngIf="editingComment?.id === comment.id; else commentView">
         <app-comment-form
@@ -29,17 +29,20 @@
           (cancel)="onCancelEdit()"
         ></app-comment-form>
       </div>
-      
+
       <ng-template #commentView>
         <div class="comment-header">
           <span class="author">{{ comment.author.username }}</span>
           <span class="date">{{ comment.date | date:'medium' }}</span>
         </div>
-        
+
         <div class="comment-content">
           {{ comment.text }}
         </div>
-        
+
+        <div *ngIf="comment.imageURL">
+          <img [src]="comment.imageURL" alt="Comment image" style="max-width: 100%; margin-top: 0.5rem;">
+        </div>
         <div class="comment-actions" *ngIf="canEdit(comment) || canDelete(comment)">
           <button mat-button color="primary" *ngIf="canEdit(comment)" (click)="editComment(comment)">
             Edit
@@ -51,4 +54,4 @@
       </ng-template>
     </div>
   </div>
-</div> 
+</div>

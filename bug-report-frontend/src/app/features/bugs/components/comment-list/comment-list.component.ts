@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Comment } from '../../models/comment.model';
 import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -17,7 +17,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     CommonModule,
     MatButtonModule,
     MatSnackBarModule,
-    CommentFormComponent
+    CommentFormComponent,
+    NgOptimizedImage
   ]
 })
 export class CommentListComponent implements OnInit {
@@ -111,4 +112,4 @@ export class CommentListComponent implements OnInit {
   onCancelEdit(): void {
     this.editingComment = null;
   }
-} 
+}

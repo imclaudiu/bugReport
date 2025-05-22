@@ -40,12 +40,12 @@ export class BugFormComponent implements OnInit {
   @Input() bug?: Bug;
   @Output() submitForm = new EventEmitter<Bug>();
   @Output() cancel = new EventEmitter<void>();
-  
+
   bugForm: FormGroup;
   loading = false;
   isSubmitting = false;
   error: string | null = null;
-  
+
   statusOptions = ['NOT SOLVED', 'SOLVED'];
   availableTags: string[] = ['UI', 'Backend', 'Frontend', 'Database', 'Security', 'Performance', 'Bug', 'Feature'];
   tags: string[] = [];
@@ -60,7 +60,8 @@ export class BugFormComponent implements OnInit {
       description: ['', [Validators.required, Validators.minLength(10)]],
       status: ['NOT SOLVED', Validators.required],
       assignedTo: [null],
-      tagInput: ['']
+      tagInput: [''],
+      imageURL: ['']
     });
   }
 
@@ -76,14 +77,27 @@ export class BugFormComponent implements OnInit {
     }
   }
 
+  // In your component
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.bugForm.get('imageURL')?.setValue(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onSubmit(): void {
     if (this.bugForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       this.error = null;
-      
+
       const formValue = this.bugForm.value;
       const currentUser = this.authService.getCurrentUser();
-      
+
       if (!currentUser) {
         this.snackBar.open('User information not found. Please log in again.', 'Close', { duration: 3000 });
         this.isSubmitting = false;
@@ -98,7 +112,7 @@ export class BugFormComponent implements OnInit {
         author: this.bug?.author || { id: currentUser.id },
         tags: this.tags
       };
-      
+
       this.submitForm.emit(bug);
     }
   }
@@ -130,4 +144,4 @@ export class BugFormComponent implements OnInit {
     }
     return '';
   }
-} 
+}
