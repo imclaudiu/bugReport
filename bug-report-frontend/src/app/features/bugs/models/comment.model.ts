@@ -11,4 +11,7 @@ export interface Comment {
   bug: {
     id: number;
   };
-} 
+  parentId?: number; // Add this line
+  replies?: Comment[]; // Optional: for easier nesting in frontend
+
+}

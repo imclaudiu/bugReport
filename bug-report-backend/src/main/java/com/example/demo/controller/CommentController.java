@@ -19,6 +19,11 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @PostMapping("/addReply")
+    public Comment addReply(@RequestBody Comment comment) {
+        return this.commentService.addComment(comment);
+    }
+
     @PostMapping("/addComment")
     public Comment addComment(@RequestBody Comment comment) {
         return this.commentService.addComment(comment);

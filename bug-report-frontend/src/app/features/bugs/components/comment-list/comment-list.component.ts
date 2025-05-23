@@ -27,6 +27,7 @@ export class CommentListComponent implements OnInit {
   loading = true;
   error: string | null = null;
   editingComment: Comment | null = null;
+  replyingToCommentId: number | null = null;
 
   constructor(
     private commentService: CommentService,
@@ -66,6 +67,20 @@ export class CommentListComponent implements OnInit {
 
   editComment(comment: Comment): void {
     this.editingComment = comment;
+  }
+
+  showReplyForm(commentId: number): void {
+    this.replyingToCommentId = commentId;
+  }
+
+  cancelReply(): void {
+    this.replyingToCommentId = null;
+  }
+
+  onReplySaved(reply: Comment, parentComment: Comment): void {
+    parentComment.replies = parentComment.replies || [];
+    parentComment.replies.unshift(reply);
+    this.replyingToCommentId = null;
   }
 
   deleteComment(comment: Comment): void {

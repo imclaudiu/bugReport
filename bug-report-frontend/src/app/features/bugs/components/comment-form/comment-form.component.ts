@@ -29,6 +29,7 @@ export class CommentFormComponent implements OnInit {
   commentForm: FormGroup;
   loading = false;
   error: string | null = null;
+  @Input() parentId!: number;
 
   constructor(
     private fb: FormBuilder,

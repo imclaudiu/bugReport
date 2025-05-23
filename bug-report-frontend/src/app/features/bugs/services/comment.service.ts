@@ -30,7 +30,7 @@ export class CommentService {
     return this.http.get<Comment>(`${this.apiUrl}/getComment/${commentId}`);
   }
 
-  createComment(bugId: number, text: string, imageURL: string): Observable<Comment> {
+  createComment(bugId: number, text: string, imageURL: string, parentID?: number): Observable<Comment> {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
       return throwError(() => new Error('User must be logged in to comment'));
@@ -42,7 +42,8 @@ export class CommentService {
       bug: { id: bugId },
       author: { id: currentUser.id },
       date: new Date().toISOString(),
-      voteCount: 0
+      voteCount: 0,
+      parentID
     });
   }
 
