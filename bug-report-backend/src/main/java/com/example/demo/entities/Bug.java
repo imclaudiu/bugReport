@@ -52,7 +52,7 @@ public class Bug {
         this.description = description;
         this.creationDate = creationDate;
         this.imageURL = imageURL;
-        if(status.equals("SOLVED") || status.equals("NOT SOLVED")) {
+        if(status.equals("SOLVED") || status.equals("NOT SOLVED") || status.equals("IN PROGRESS")) {
             this.status = status;
         }else{
             throw new RuntimeException("Status not solved");
