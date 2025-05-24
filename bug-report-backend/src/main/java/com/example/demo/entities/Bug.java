@@ -61,10 +61,10 @@ public class Bug {
         this.description = description;
         this.creationDate = creationDate;
         this.imageURL = imageURL;
-        if(status.equals("SOLVED") || status.equals("NOT SOLVED") || status.equals("IN PROGRESS")) {
+        if(status.equals("RECEIVED") || status.equals("IN_PROGRESS") || status.equals("SOLVED")) {
             this.status = status;
         }else{
-            throw new RuntimeException("Status not solved");
+            throw new RuntimeException("Invalid status value. Must be RECEIVED, IN_PROGRESS, or SOLVED");
         }
         this.voteCount = voteCount;
     }

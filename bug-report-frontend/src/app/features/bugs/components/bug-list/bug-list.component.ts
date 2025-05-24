@@ -14,6 +14,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { BugsService } from '../../services/bugs.service';
 import { Bug } from '../../models/bug.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { Tag } from '../../../../core/models/tag.model';
 
 @Component({
   selector: 'app-bug-list',
@@ -38,7 +39,11 @@ export class BugListComponent implements OnInit {
   loading = false;
   error: string | null = null;
   filterForm: FormGroup;
-  availableTags: string[] = ['UI', 'Backend', 'Frontend', 'Database', 'Security', 'Performance', 'Bug', 'Feature'];
+  availableTags: Tag[] = [
+    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' }, 
+    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' }, 
+    { name: 'Bug' }, { name: 'Feature' }
+  ];
 
   constructor(
     private bugsService: BugsService,
@@ -68,11 +73,7 @@ export class BugListComponent implements OnInit {
     this.error = null;
     this.bugsService.getAllBugs().subscribe({
       next: (bugs) => {
-        this.bugs = bugs.sort((a, b) => {
-          const dateA = new Date(a.creationDate).getTime();
-          const dateB = new Date(b.creationDate).getTime();
-          return dateB - dateA;
-        });
+        this.bugs = bugs;
         this.loading = false;
       },
       error: (err) => {
@@ -101,18 +102,63 @@ export class BugListComponent implements OnInit {
       }
     }
 
+    // If only showing user's bugs without other filters
+    if (showOnlyMine && !title && !tag) {
+      this.bugsService.getBugsByUser(userId!).subscribe({
+        next: (bugs) => {
+          this.bugs = bugs;
+          this.loading = false;
+          if (bugs.length === 0) {
+            this.snackBar.open('No bugs found matching your criteria', 'Close', { duration: 3000 });
+          }
+        },
+        error: (err) => {
+          console.error('Error loading user bugs:', err);
+          this.error = 'Failed to load your bugs. Please try again.';
+          this.loading = false;
+          this.snackBar.open(this.error, 'Close', { duration: 5000 });
+        }
+      });
+      return;
+    }
+
+    // If only filtering by tag
+    if (tag && !title && !showOnlyMine) {
+      this.bugsService.getBugsByTag(tag).subscribe({
+        next: (bugs) => {
+          this.bugs = bugs;
+          this.loading = false;
+          if (bugs.length === 0) {
+            this.snackBar.open('No bugs found with this tag', 'Close', { duration: 3000 });
+          }
+        },
+        error: (err) => {
+          console.error('Error loading bugs by tag:', err);
+          this.error = 'Failed to load bugs by tag. Please try again.';
+          this.loading = false;
+          this.snackBar.open(this.error, 'Close', { duration: 5000 });
+        }
+      });
+      return;
+    }
+
     // If no filters are active, load all bugs
     if (!title && !tag && !userId) {
       this.loadBugs();
       return;
     }
 
+    // Use general filter for other combinations
     this.bugsService.filterBugs(title, userId, tag).subscribe({
       next: (bugs) => {
         this.bugs = bugs;
         this.loading = false;
+        if (bugs.length === 0) {
+          this.snackBar.open('No bugs found matching your criteria', 'Close', { duration: 3000 });
+        }
       },
       error: (err) => {
+        console.error('Error filtering bugs:', err);
         this.error = 'Failed to filter bugs. Please try again.';
         this.loading = false;
         this.snackBar.open(this.error, 'Close', { duration: 5000 });

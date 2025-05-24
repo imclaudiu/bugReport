@@ -24,6 +24,9 @@ public interface BugRepository extends JpaRepository<Bug, Long> {
     // Get bugs by user
     List<Bug> findByAuthorId(Long userId);
     
+    // Get bugs by user sorted by creation date
+    List<Bug> findByAuthorIdOrderByCreationDateDesc(Long userId);
+    
     // Get bugs by tag
     @Query("SELECT b FROM Bug b JOIN b.tags t WHERE t.name = :tagName")
     List<Bug> findByTagName(@Param("tagName") String tagName);

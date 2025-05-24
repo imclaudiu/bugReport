@@ -44,10 +44,28 @@ export class CommentListComponent implements OnInit {
     this.error = null;
     this.commentService.getCommentsForBug(this.bugId).subscribe({
       next: (comments) => {
-        this.comments = comments;
+        // Convert dates to Date objects
+        const processedComments = comments.map(comment => ({
+          ...comment,
+          date: new Date(comment.date)
+        }));
+
+        // Separate parent comments and replies
+        const parentComments = processedComments.filter(comment => !comment.parent);
+        const replies = processedComments.filter(comment => comment.parent);
+
+        // Organize replies under their parent comments
+        this.comments = parentComments.map(parent => ({
+          ...parent,
+          replies: replies
+            .filter(reply => reply.parent?.id === parent.id)
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
         this.loading = false;
       },
       error: (err) => {
+        console.error('Error loading comments:', err);
         this.error = 'Failed to load comments';
         this.loading = false;
         this.snackBar.open('Failed to load comments', 'Close', { duration: 3000 });
@@ -78,9 +96,20 @@ export class CommentListComponent implements OnInit {
   }
 
   onReplySaved(reply: Comment, parentComment: Comment): void {
-    parentComment.replies = parentComment.replies || [];
-    parentComment.replies.unshift(reply);
+    // Ensure replies array exists
+    if (!parentComment.replies) {
+      parentComment.replies = [];
+    }
+    
+    // Add the new reply at the beginning of the replies array
+    parentComment.replies.unshift({
+      ...reply,
+      date: new Date(reply.date),
+      parent: parentComment
+    });
+    
     this.replyingToCommentId = null;
+    this.snackBar.open('Reply added successfully', 'Close', { duration: 3000 });
   }
 
   deleteComment(comment: Comment): void {

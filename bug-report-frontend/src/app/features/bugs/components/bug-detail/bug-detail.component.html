@@ -47,13 +47,12 @@
       </div>
     </div>
 
-    <div class="tags-section" *ngIf="bug.tags && bug.tags.length > 0">
-      <h3 class="section-title">Tags</h3>
-      <mat-chip-grid>
-        <mat-chip-row *ngFor="let tag of bug.tags">
-          {{ tag }}
-        </mat-chip-row>
-      </mat-chip-grid>
+    <div class="tags-container">
+      <mat-chip-set>
+        <mat-chip *ngFor="let tag of bug.tags" color="primary" selected>
+          {{tag.name}}
+        </mat-chip>
+      </mat-chip-set>
     </div>
   </mat-card-content>
 
@@ -68,6 +67,10 @@
             *ngIf="canDeleteBug()"
             (click)="onDeleteBug()">
       Delete Bug
+    </button>
+    <button mat-raised-button color="accent"
+            (click)="onReply()">
+      Reply
     </button>
   </mat-card-actions>
 </mat-card>

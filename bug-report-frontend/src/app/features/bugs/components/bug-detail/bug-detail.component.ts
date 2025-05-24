@@ -109,44 +109,38 @@ export class BugDetailComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Delete Bug Report',
-        message: 'Are you sure you want to delete this bug report? This action cannot be undone.'
-      }
-    });
+    if (confirm('Are you sure you want to delete this bug?')) {
+      this.bugsService.deleteBug(this.bug.id).subscribe({
+        next: () => {
+          this.snackBar.open('Bug deleted successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/bugs']);
+        },
+        error: (err) => {
+          console.error('Error deleting bug:', err);
+          this.snackBar.open('Failed to delete bug. Please try again.', 'Close', { duration: 5000 });
+        }
+      });
+    }
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && this.bug?.id) {
-        this.loading = true;
-        this.bugsService.deleteBug(this.bug.id as number).subscribe({
-          next: () => {
-            this.loading = false;
-            this.snackBar.open('Bug report deleted successfully', 'Close', { duration: 3000 });
-            this.router.navigate(['/bugs']);
-          },
-          error: (error) => {
-            this.loading = false;
-            console.error('Error deleting bug:', error);
-            if (error.status === 404) {
-              this.snackBar.open('Bug not found', 'Close', { duration: 3000 });
-            } else {
-              this.snackBar.open('Failed to delete bug report', 'Close', { duration: 3000 });
-            }
-          }
-        });
-      }
-    });
+  onReply(): void {
+    // Scroll to the comment section
+    const commentSection = document.querySelector('.comments-section');
+    if (commentSection) {
+      commentSection.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   getStatusColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'solved':
-        return 'primary';
-      case 'not solved':
+    switch (status) {
+      case 'RECEIVED':
         return 'warn';
-      default:
+      case 'IN_PROGRESS':
+        return 'accent';
+      case 'SOLVED':
         return 'primary';
+      default:
+        return 'default';
     }
   }
 } 

@@ -135,11 +135,13 @@
   }
 
   mat-card-actions {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 8px;
+    padding: 16px;
+    
+    button {
+      margin: 0;
+    }
   }
 } 

@@ -68,16 +68,24 @@
         ></app-comment-form>
 
         <div class="replies" *ngIf="comment.replies?.length">
-          <ng-container *ngFor="let reply of comment.replies">
-            <div class="reply">
-              <div class="comment-header">
-                <span class="author">{{ reply.author.username }}</span>
-                <span class="date">{{ reply.date | date:'medium' }}</span>
-              </div>
-              <div>{{ reply.text }}</div>
-              <img *ngIf="reply.imageURL" [src]="reply.imageURL" alt="Reply image" style="max-width: 100%; margin-top: 0.5rem;">
+          <div *ngFor="let reply of comment.replies" class="reply">
+            <div class="comment-header">
+              <span class="author">{{ reply.author.username }}</span>
+              <span class="date">{{ reply.date | date:'medium' }}</span>
             </div>
-          </ng-container>
+            <div class="comment-content">{{ reply.text }}</div>
+            <div *ngIf="reply.imageURL" class="comment-image">
+              <img [src]="reply.imageURL" alt="Reply image" style="max-width: 100%; margin-top: 0.5rem;">
+            </div>
+            <div class="comment-actions" *ngIf="canEdit(reply) || canDelete(reply)">
+              <button mat-button color="primary" *ngIf="canEdit(reply)" (click)="editComment(reply)">
+                Edit
+              </button>
+              <button mat-button color="warn" *ngIf="canDelete(reply)" (click)="deleteComment(reply)">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       </ng-template>
 

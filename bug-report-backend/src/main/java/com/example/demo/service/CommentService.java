@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * In clasa CommentService a fost implementata logica pentru adaugarea, preluarea, updatarea,
@@ -44,6 +46,10 @@ public class CommentService {
             throw new RuntimeException("User not found for ID: " + comment.getAuthor().getId());
         }
         comment.setAuthor(author);
+
+        if (comment.getDate() == null) {
+            comment.setDate(ZonedDateTime.now());
+        }
 
         return commentRepository.save(comment);
     }
@@ -97,7 +103,18 @@ public class CommentService {
     }
 
     public List<Comment> findByBugId(Long bugId) {
-        return commentRepository.findByBugId(bugId);
+        List<Comment> parentComments = commentRepository.findByBugId(bugId);
+        List<Comment> replies = commentRepository.findRepliesByBugId(bugId);
+        
+        // Organize replies under their parent comments
+        for (Comment parent : parentComments) {
+            List<Comment> parentReplies = replies.stream()
+                .filter(reply -> reply.getParent().getId().equals(parent.getId()))
+                .collect(Collectors.toList());
+            parent.setReplies(parentReplies);
+        }
+        
+        return parentComments;
     }
 
 }

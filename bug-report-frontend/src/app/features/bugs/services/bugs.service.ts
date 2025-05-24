@@ -14,7 +14,7 @@ export class BugsService {
   constructor(private http: HttpClient) { }
 
   getAllBugs(): Observable<Bug[]> {
-    return this.http.get<Bug[]>(`${this.apiUrl}/getAllBugs`);
+    return this.http.get<Bug[]>(`${this.apiUrl}/sortByDate`);
   }
 
   getBugById(id: number): Observable<Bug> {
@@ -61,6 +61,11 @@ export class BugsService {
     if (userId) params.userId = userId;
     if (tagName) params.tagName = tagName;
     
-    return this.http.get<Bug[]>(`${this.apiUrl}/search`, { params });
+    return this.http.get<Bug[]>(`${this.apiUrl}/search`, { params }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error filtering bugs:', error);
+        return throwError(() => error);
+      })
+    );
   }
 } 

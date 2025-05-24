@@ -37,4 +37,32 @@
 
 .error {
   color: #f44336;
+}
+
+.replies {
+  margin-left: 2rem;
+  margin-top: 1rem;
+  border-left: 2px solid #e0e0e0;
+  padding-left: 1rem;
+}
+
+.reply {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.reply .comment-header {
+  font-size: 0.85rem;
+}
+
+.reply .comment-content {
+  font-size: 0.95rem;
+}
+
+.comment-image {
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  overflow: hidden;
 } 

@@ -3,9 +3,9 @@ import { IComment } from '../../../core/models/shared.types';
 import { Tag } from '../../../core/models/tag.model';
 
 export enum BugStatus {
-  SOLVED = 'SOLVED',
-  NOT_SOLVED = 'NOT SOLVED',
-  IN_PROGRESS = 'IN PROGRESS'
+  RECEIVED = 'RECEIVED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  SOLVED = 'SOLVED'
 }
 
 export enum BugPriority {
@@ -18,13 +18,13 @@ export interface Bug {
   id?: number;
   title: string;
   description: string;
-  status: string;
+  status: BugStatus;
   priority: string;
   creationDate: Date;
   updatedAt?: Date;
   author: IUser;
   assignedTo?: number;
-  tags?: string[];
+  tags?: Tag[];
   imageURL?: string;
   comments: Comment[];
 }

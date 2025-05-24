@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Bug;
+import com.example.demo.entities.Tag;
 import com.example.demo.repository.BugRepository;
+import com.example.demo.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,16 +27,38 @@ public class BugService {
     @Autowired
     private BugRepository bugRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Transactional
     public Bug addBug(Bug bug) {
-            try {
-                if (bug.getCreationDate() == null) {
-                    bug.setCreationDate(ZonedDateTime.now());
+        try {
+            if (bug.getCreationDate() == null) {
+                bug.setCreationDate(ZonedDateTime.now());
+            }
+
+            // Handle tags
+            if (bug.getTags() != null) {
+                List<Tag> managedTags = new ArrayList<>();
+                for (Tag tag : bug.getTags()) {
+                    // Check if tag exists
+                    Optional<Tag> existingTag = tagRepository.findByName(tag.getName());
+                    if (existingTag.isPresent()) {
+                        managedTags.add(existingTag.get());
+                    } else {
+                        // Create new tag if it doesn't exist
+                        Tag newTag = new Tag();
+                        newTag.setName(tag.getName());
+                        managedTags.add(tagRepository.save(newTag));
+                    }
                 }
-                return this.bugRepository.save(bug);
+                bug.setTags(managedTags);
             }
-            catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error1!");
-            }
+
+            return this.bugRepository.save(bug);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error adding bug: " + e.getMessage());
+        }
     }
 
     public Bug getBugById(Long id) {
@@ -55,18 +80,36 @@ public class BugService {
 
     @Transactional
     public Bug updateBug(Long id, Bug bug) {
-
         Bug b = this.bugRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bug Not Found!"));
 
         b.setAuthor(bug.getAuthor());
         b.setTitle(bug.getTitle());
         b.setDescription(bug.getDescription());
-        b.setCreationDate(bug.getCreationDate());//de ce am avea nevoie?
+        b.setCreationDate(bug.getCreationDate());
         b.setImageURL(bug.getImageURL());
         b.setStatus(bug.getStatus());
         b.setVoteCount(bug.getVoteCount());
 
-        return this.bugRepository.save(b);}
+        // Handle tags
+        if (bug.getTags() != null) {
+            List<Tag> managedTags = new ArrayList<>();
+            for (Tag tag : bug.getTags()) {
+                // Check if tag exists
+                Optional<Tag> existingTag = tagRepository.findByName(tag.getName());
+                if (existingTag.isPresent()) {
+                    managedTags.add(existingTag.get());
+                } else {
+                    // Create new tag if it doesn't exist
+                    Tag newTag = new Tag();
+                    newTag.setName(tag.getName());
+                    managedTags.add(tagRepository.save(newTag));
+                }
+            }
+            b.setTags(managedTags);
+        }
+
+        return this.bugRepository.save(b);
+    }
 
 
     @Transactional
@@ -94,7 +137,8 @@ public class BugService {
 
     // Get bugs by user
     public List<Bug> getBugsByUser(Long userId) {
-        return bugRepository.findByAuthorId(userId);
+        List<Bug> bugs = bugRepository.findByAuthorIdOrderByCreationDateDesc(userId);
+        return bugs;
     }
 
     // Get bugs by tag
