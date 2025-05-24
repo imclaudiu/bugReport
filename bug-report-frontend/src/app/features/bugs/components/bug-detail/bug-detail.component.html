@@ -36,7 +36,7 @@
       <div class="metadata-grid">
       <div class="metadata-item">
         <span class="label">Reported By:</span>
-          <span class="value">
+          <ng-container class="value">
             {{ bug.author.username || ('User #' + bug.author.id) || 'Unknown' }}
             <button *ngIf="isModerator() && !bug.author.banned && bug.author.id !== undefined"
                     mat-icon-button color="warn"
@@ -50,7 +50,7 @@
                     (click)="unbanUser(bug.author.id)">
               <mat-icon>check_circle</mat-icon>
             </button>
-          </span>
+          </ng-container>
       </div>
       <div class="metadata-item" *ngIf="bug.assignedTo">
         <span class="label">Assigned To:</span>

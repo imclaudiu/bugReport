@@ -134,5 +134,4 @@ public class CommentService {
 
         return topLevelComments;
     }
-
 }
