@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -30,7 +31,7 @@ public class Comment {
     private String text;
 
     @Column(name = "creationDate")
-    private LocalDateTime date;
+    private ZonedDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "parentCommentId")
@@ -39,7 +40,7 @@ public class Comment {
     private String imageURL;
     private int voteCount;
 
-    public Comment(Long id, Bug bug, Users author, String text, LocalDateTime date, String imageURL, int voteCount, Comment parent) {
+    public Comment(Long id, Bug bug, Users author, String text, ZonedDateTime date, String imageURL, int voteCount, Comment parent) {
         this.id = id;
         this.bug = bug;
         this.author = author;
@@ -92,11 +93,11 @@ public class Comment {
         this.text = text;
     }
 
-    public LocalDateTime getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 

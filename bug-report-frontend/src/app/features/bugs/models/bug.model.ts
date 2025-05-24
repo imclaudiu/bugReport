@@ -4,7 +4,8 @@ import { Tag } from '../../../core/models/tag.model';
 
 export enum BugStatus {
   SOLVED = 'SOLVED',
-  NOT_SOLVED = 'NOT SOLVED'
+  NOT_SOLVED = 'NOT SOLVED',
+  IN_PROGRESS = 'IN PROGRESS'
 }
 
 export enum BugPriority {
@@ -44,4 +45,4 @@ export interface Comment {
   updatedAt: Date;
   createdBy: number;
   bugId: number;
-} 
+}

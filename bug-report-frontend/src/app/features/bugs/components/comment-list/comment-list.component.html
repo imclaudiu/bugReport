@@ -33,6 +33,9 @@
       <ng-template #commentView>
         <div class="comment-header">
           <span class="author">{{ comment.author.username }}</span>
+          <span class="reply">
+            <button mat-button (click)="showReplyForm(comment.id)">Reply</button>
+          </span>
           <span class="date">{{ comment.date | date:'medium' }}</span>
         </div>
 
@@ -52,15 +55,17 @@
             Delete
           </button>
 
-          <button mat-button (click)="showReplyForm(comment.id)">Reply</button>
-          <app-comment-form
-            *ngIf="replyingToCommentId === comment.id"
-            [bugId]="bugId"
-            [parentId]="comment.id"
-            (commentSaved)="onReplySaved($event, comment)"
-            (cancel)="cancelReply()"
-          ></app-comment-form>
+
+
         </div>
+
+        <app-comment-form
+          *ngIf="replyingToCommentId === comment.id"
+          [bugId]="bugId"
+          [parentId]="comment.id"
+          (commentSaved)="onReplySaved($event, comment)"
+          (cancel)="cancelReply()"
+        ></app-comment-form>
 
         <div class="replies" *ngIf="comment.replies?.length">
           <ng-container *ngFor="let reply of comment.replies">
@@ -74,7 +79,6 @@
             </div>
           </ng-container>
         </div>
-
       </ng-template>
 
     </div>
