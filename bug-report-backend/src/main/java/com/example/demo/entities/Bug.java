@@ -28,6 +28,14 @@ public class Bug {
     @OneToMany(mappedBy = "bug", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "BugTag",
+        joinColumns = @JoinColumn(name = "bugId"),
+        inverseJoinColumns = @JoinColumn(name = "tagId")
+    )
+    private List<Tag> tags = new ArrayList<>();
+
     @Column(name = "title")
     private String title;
 
@@ -143,5 +151,21 @@ public class Bug {
     public void removeComment(Comment comment) {
         comments.remove(comment);
         comment.setBug(null);
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
 }
