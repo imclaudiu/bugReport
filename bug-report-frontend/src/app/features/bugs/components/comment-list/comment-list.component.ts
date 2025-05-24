@@ -158,6 +158,20 @@ export class CommentListComponent implements OnInit {
     }
   }
 
+  unbanUser(userId: number): void {
+    if (confirm('Are you sure you want to unban this user?')) {
+      this.authService.unbanUser(userId).subscribe({
+        next: () => {
+          this.snackBar.open('User unbanned successfully', 'Close', { duration: 3000 });
+          this.loadComments();
+        },
+        error: () => {
+          this.snackBar.open('Failed to unban user', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+
   onCommentSaved(updatedComment: Comment): void {
     if (this.editingComment) {
       const index = this.comments.findIndex(c => c.id === updatedComment.id);

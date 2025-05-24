@@ -63,14 +63,14 @@
             </button>
           </mat-form-field>
 
-          <mat-chip-grid>
+          <mat-chip-set>
             <mat-chip-row *ngFor="let tag of selectedTags" (removed)="removeTag(tag)">
               {{ tag.name }}
               <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
               </button>
             </mat-chip-row>
-          </mat-chip-grid>
+          </mat-chip-set>
         </div>
 
         <mat-card-actions align="end">

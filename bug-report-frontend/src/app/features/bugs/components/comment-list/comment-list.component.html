@@ -37,6 +37,8 @@
               block
             </button>
             <span *ngIf="comment.author.banned" class="banned-label">(Banned)</span>
+            <button *ngIf="isModerator() && comment.author.banned" mat-icon-button color="primary" (click)="unbanUser(comment.author.id)">
+              check_circle </button>
           </span>
           <span class="reply">
             <button mat-button (click)="showReplyForm(comment.id)">Reply</button>
