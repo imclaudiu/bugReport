@@ -38,6 +38,17 @@
         <span class="label">Reported By:</span>
           <span class="value">
             {{ bug.author.username || ('User #' + bug.author.id) || 'Unknown' }}
+            <button *ngIf="isModerator() && !bug.author.banned && bug.author.id !== undefined"
+                    mat-icon-button color="warn"
+                    (click)="banUser(bug.author.id)">
+              <mat-icon>block</mat-icon>
+            </button>
+          <span *ngIf="bug.author.banned" class="banned-label">(Banned)</span>
+
+            <button *ngIf="isModerator() && bug.author.banned && bug.author.id !== undefined"
+                    mat-icon-button color="primary"
+                    (click)="unbanUser(bug.author.id)">
+              <mat-icon>check_circle</mat-icon>
           </span>
       </div>
       <div class="metadata-item" *ngIf="bug.assignedTo">
@@ -72,6 +83,7 @@
             (click)="onReply()">
       Reply
     </button>
+
   </mat-card-actions>
 </mat-card>
 

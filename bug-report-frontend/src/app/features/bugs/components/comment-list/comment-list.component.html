@@ -32,7 +32,12 @@
 
       <ng-template #commentView>
         <div class="comment-header">
-          <span class="author">{{ comment.author.username }}</span>
+          <span class="author">{{ comment.author.username }}
+            <button *ngIf="isModerator() && !comment.author.banned" mat-icon-button color="warn" (click)="banUser(comment.author.id)">
+              block
+            </button>
+            <span *ngIf="comment.author.banned" class="banned-label">(Banned)</span>
+          </span>
           <span class="reply">
             <button mat-button (click)="showReplyForm(comment.id)">Reply</button>
           </span>

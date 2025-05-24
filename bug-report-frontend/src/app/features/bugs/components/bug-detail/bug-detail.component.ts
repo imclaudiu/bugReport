@@ -80,9 +80,29 @@ export class BugDetailComponent implements OnInit {
     console.log('Checking edit permission:', {
       currentUserId: currentUser?.id,
       authorId: this.bug.author.id,
-      canEdit: currentUser?.id === this.bug.author.id
+      canEdit: currentUser?.id === this.bug.author.id || currentUser?.moderator
     });
-    return currentUser?.id === this.bug.author.id;
+    return currentUser?.id === this.bug.author.id || this.authService.isModerator();
+  }
+
+  isModerator(): boolean {
+    return this.authService.isModerator();
+  }
+
+  banUser(userId: number): void {
+    if (confirm('Are you sure you want to ban this user?')) {
+      this.authService.banUser(userId).subscribe({
+        next: () => {
+          this.snackBar.open('User banned successfully', 'Close', { duration: 3000 });
+          if (this.bug && this.bug.author && this.bug.author.id === userId) {
+            this.bug.author.banned = true;
+          }
+        },
+        error: () => {
+          this.snackBar.open('Failed to ban user', 'Close', { duration: 3000 });
+        }
+      });
+    }
   }
 
   canDeleteBug(): boolean {
@@ -141,6 +161,22 @@ export class BugDetailComponent implements OnInit {
         return 'primary';
       default:
         return 'default';
+    }
+  }
+
+  unbanUser(id: number) {
+    if (confirm('Are you sure you want to unban this user?')) {
+      this.authService.unbanUser(id).subscribe({
+        next: () => {
+          this.snackBar.open('User unbanned successfully', 'Close', { duration: 3000 });
+          if (this.bug && this.bug.author && this.bug.author.id === id) {
+            this.bug.author.banned = false;
+          }
+        },
+        error: () => {
+          this.snackBar.open('Failed to unban user', 'Close', { duration: 3000 });
+        }
+      });
     }
   }
 }

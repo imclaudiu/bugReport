@@ -7,6 +7,7 @@ export interface Comment {
   author: {
     id: number;
     username: string;
+    banned?: boolean;
   };
   bug: {
     id: number;

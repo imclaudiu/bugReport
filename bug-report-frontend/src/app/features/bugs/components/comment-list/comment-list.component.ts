@@ -7,6 +7,8 @@ import { User } from '../../../../core/models/user.model';
 import { MatButtonModule } from '@angular/material/button';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+// @ts-ignore
+import {MatIcon} from '@angular/material/icon-module.d-BeibE7j0';
 
 @Component({
   selector: 'app-comment-list',
@@ -17,8 +19,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     CommonModule,
     MatButtonModule,
     MatSnackBarModule,
-    CommentFormComponent,
-    NgOptimizedImage
+    CommentFormComponent
   ]
 })
 export class CommentListComponent implements OnInit {
@@ -75,7 +76,7 @@ export class CommentListComponent implements OnInit {
 
   canEdit(comment: Comment): boolean {
     const currentUser = this.authService.getCurrentUser();
-    return currentUser?.id === comment.author.id;
+    return currentUser?.id === comment.author.id || (currentUser?.moderator ?? false);
   }
 
   canDelete(comment: Comment): boolean {
@@ -100,14 +101,14 @@ export class CommentListComponent implements OnInit {
     if (!parentComment.replies) {
       parentComment.replies = [];
     }
-    
+
     // Add the new reply at the beginning of the replies array
     parentComment.replies.unshift({
       ...reply,
       date: new Date(reply.date),
       parent: parentComment
     });
-    
+
     this.replyingToCommentId = null;
     this.snackBar.open('Reply added successfully', 'Close', { duration: 3000 });
   }
@@ -134,6 +135,24 @@ export class CommentListComponent implements OnInit {
             this.comments = this.comments.filter(c => c.id !== comment.id);
             this.snackBar.open('Comment deleted successfully', 'Close', { duration: 3000 });
           }
+        }
+      });
+    }
+  }
+
+  isModerator(): boolean {
+    return this.authService.isModerator();
+  }
+
+  banUser(userId: number): void {
+    if (confirm('Are you sure you want to ban this user?')) {
+      this.authService.banUser(userId).subscribe({
+        next: () => {
+          this.snackBar.open('User banned successfully', 'Close', { duration: 3000 });
+          this.loadComments(); // Refresh to show banned status
+        },
+        error: () => {
+          this.snackBar.open('Failed to ban user', 'Close', { duration: 3000 });
         }
       });
     }

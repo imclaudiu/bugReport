@@ -6,8 +6,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -123,5 +121,25 @@ public class UsersService {
     public Users findByEmail(String email) {
         return this.usersRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+    public Users banUser(Long id) {
+        Users user = this.usersRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if(user.isModerator()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot ban a moderator");
+        }else {
+            user.setBanned(true);
+        }
+        return this.usersRepository.save(user);
+    }
+    public Users unbanUser(Long id) {
+        Users user = this.usersRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if(user.isModerator()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot unban a moderator");
+        }else {
+            user.setBanned(false);
+        }
+        return this.usersRepository.save(user);
     }
 }
