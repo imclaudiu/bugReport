@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +49,12 @@ public class CommentService {
             throw new RuntimeException("User not found for ID: " + comment.getAuthor().getId());
         }
         comment.setAuthor(author);
+
+        if (comment.getParent() != null && comment.getParent().getId() != null) {
+            Comment parent = commentRepository.findById(comment.getParent().getId())
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found!"));
+            comment.setParent(parent);
+        }
 
         if (comment.getDate() == null) {
             comment.setDate(ZonedDateTime.now());
@@ -103,18 +112,27 @@ public class CommentService {
     }
 
     public List<Comment> findByBugId(Long bugId) {
-        List<Comment> parentComments = commentRepository.findByBugId(bugId);
-        List<Comment> replies = commentRepository.findRepliesByBugId(bugId);
-        
-        // Organize replies under their parent comments
-        for (Comment parent : parentComments) {
-            List<Comment> parentReplies = replies.stream()
-                .filter(reply -> reply.getParent().getId().equals(parent.getId()))
-                .collect(Collectors.toList());
-            parent.setReplies(parentReplies);
+        List<Comment> allComments = commentRepository.findByBugId(bugId);
+        Map<Long, Comment> commentMap = new HashMap<>();
+        List<Comment> topLevelComments = new ArrayList<>();
+
+        for (Comment comment : allComments) {
+            comment.setReplies(new ArrayList<>()); // Ensure replies list is initialized
+            commentMap.put(comment.getId(), comment);
         }
-        
-        return parentComments;
+
+        for (Comment comment : allComments) {
+            if (comment.getParent() != null && comment.getParent().getId() != null) {
+                Comment parent = commentMap.get(comment.getParent().getId());
+                if (parent != null) {
+                    parent.getReplies().add(comment);
+                }
+            } else {
+                topLevelComments.add(comment);
+            }
+        }
+
+        return topLevelComments;
     }
 
 }

@@ -135,7 +135,7 @@ export class BugDetailComponent implements OnInit {
     switch (status) {
       case 'RECEIVED':
         return 'warn';
-      case 'IN_PROGRESS':
+      case 'IN PROGRESS':
         return 'accent';
       case 'SOLVED':
         return 'primary';
@@ -143,4 +143,4 @@ export class BugDetailComponent implements OnInit {
         return 'default';
     }
   }
-} 
+}

@@ -46,13 +46,13 @@ export class BugFormComponent implements OnInit {
   error: string | null = null;
 
   statusOptions = [
-    { value: 'RECEIVED', label: 'Received' },
-    { value: 'IN_PROGRESS', label: 'In Progress' },
-    { value: 'SOLVED', label: 'Solved' }
+    { value: 'RECEIVED', label: 'RECEIVED' },
+    { value: 'IN PROGRESS', label: 'IN PROGRESS' },
+    { value: 'SOLVED', label: 'SOLVED' }
   ];
   availableTags: Tag[] = [
-    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' }, 
-    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' }, 
+    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' },
+    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' },
     { name: 'Bug' }, { name: 'Feature' }
   ];
   selectedTags: Tag[] = [];
