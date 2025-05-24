@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "Bug")
@@ -44,6 +46,14 @@ public class Bug {
 
     @Column(name = "voteCount")
     private int voteCount;
+
+    @ManyToMany
+    @JoinTable(
+        name = "BugTag",
+        joinColumns = @JoinColumn(name = "bugId"),
+        inverseJoinColumns = @JoinColumn(name = "tagId")
+    )
+    private Set<Tag> tags = new HashSet<>();
 
     public Bug(Long id, Users author, String title, String description, LocalDateTime creationDate, String imageURL, String status, int voteCount) {
         this.id = id;
@@ -142,5 +152,21 @@ public class Bug {
     public void removeComment(Comment comment) {
         comments.remove(comment);
         comment.setBug(null);
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
 }

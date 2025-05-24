@@ -81,4 +81,29 @@ public class BugService {
         return bugRepository.findAllByOrderByCreationDateDesc();
     }
 
+    // Search bugs by title
+    public List<Bug> searchBugsByTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return getAllBugs();
+        }
+        return bugRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    // Get bugs by user
+    public List<Bug> getBugsByUser(Long userId) {
+        return bugRepository.findByAuthorId(userId);
+    }
+
+    // Get bugs by tag
+    public List<Bug> getBugsByTag(String tagName) {
+        if (tagName == null || tagName.trim().isEmpty()) {
+            return getAllBugs();
+        }
+        return bugRepository.findByTagName(tagName);
+    }
+
+    // Get bugs by multiple criteria
+    public List<Bug> filterBugs(String title, Long userId, String tagName) {
+        return bugRepository.findByMultipleCriteria(title, userId, tagName);
+    }
 }

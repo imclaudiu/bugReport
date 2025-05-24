@@ -22,15 +22,24 @@
 
   .filter-card {
     margin-bottom: 20px;
+    background-color: #f8f9fa;
 
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
+    .filter-form {
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
 
-      mat-form-field {
-        flex: 1;
-        min-width: 200px;
+        mat-form-field {
+          flex: 1;
+          min-width: 200px;
+        }
+
+        button {
+          height: 56px;
+          margin-top: 8px;
+        }
       }
     }
   }
@@ -62,6 +71,17 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
       }
+
+      .tags {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        mat-chip {
+          font-size: 12px;
+        }
+      }
     }
 
     .description {
@@ -71,14 +91,6 @@
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-
-    .tags {
-      margin-bottom: 16px;
-
-      mat-chip {
-        margin-right: 8px;
-      }
     }
 
     mat-card-actions {
@@ -138,12 +150,18 @@
     }
 
     .filter-card {
-      .filter-row {
-        flex-direction: column;
-        gap: 8px;
+      .filter-form {
+        .filter-row {
+          flex-direction: column;
+          gap: 8px;
 
-        mat-form-field {
-          width: 100%;
+          mat-form-field {
+            width: 100%;
+          }
+
+          button {
+            width: 100%;
+          }
         }
       }
     }
