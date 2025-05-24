@@ -68,7 +68,11 @@ export class BugListComponent implements OnInit {
     this.error = null;
     this.bugsService.getAllBugs().subscribe({
       next: (bugs) => {
-        this.bugs = bugs;
+        this.bugs = bugs.sort((a, b) => {
+          const dateA = new Date(a.creationDate).getTime();
+          const dateB = new Date(b.creationDate).getTime();
+          return dateB - dateA;
+        });
         this.loading = false;
       },
       error: (err) => {
@@ -132,4 +136,4 @@ export class BugListComponent implements OnInit {
   onCreateBug(): void {
     this.router.navigate(['/bugs/create']);
   }
-} 
+}

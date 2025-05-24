@@ -46,7 +46,7 @@ export class BugFormComponent implements OnInit {
   isSubmitting = false;
   error: string | null = null;
 
-  statusOptions = ['NOT SOLVED', 'SOLVED'];
+  statusOptions = ['NOT SOLVED', 'IN PROGRESS', 'SOLVED'];
   availableTags: string[] = ['UI', 'Backend', 'Frontend', 'Database', 'Security', 'Performance', 'Bug', 'Feature'];
   tags: string[] = [];
 
@@ -125,6 +125,9 @@ export class BugFormComponent implements OnInit {
     const tagInput = this.bugForm.get('tagInput')?.value?.trim();
     if (tagInput && !this.tags.includes(tagInput)) {
       this.tags.push(tagInput);
+      if (!this.availableTags.includes(tagInput)) {
+        this.availableTags.push(tagInput);
+      }
       this.bugForm.get('tagInput')?.setValue('');
     }
   }

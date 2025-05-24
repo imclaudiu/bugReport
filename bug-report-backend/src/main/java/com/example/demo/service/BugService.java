@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,9 @@ public class BugService {
 
     public Bug addBug(Bug bug) {
             try {
-
+                if (bug.getCreationDate() == null) {
+                    bug.setCreationDate(ZonedDateTime.now());
+                }
                 return this.bugRepository.save(bug);
             }
             catch (Exception e) {
