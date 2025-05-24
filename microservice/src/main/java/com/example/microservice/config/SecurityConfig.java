@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.microservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,15 +14,14 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/webUser/register","/users/**","/bug/**", "/comment/**", "/tag/**", "/api/**", "/auth/login") // ✅ Disable CSRF for these APIs
+                        .ignoringRequestMatchers("/webUser/register","/users/**","/bug/**", "/comment/**", "/tag/**", "/resetPass/*", "/api/**", "/auth/login") // ✅ Disable CSRF for these APIs
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll() // ✅ Allow public access
