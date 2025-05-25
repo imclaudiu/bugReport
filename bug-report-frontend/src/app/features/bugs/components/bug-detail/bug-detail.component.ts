@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BugsService } from '../../services/bugs.service';
+import { BugService } from '../../services/bug.service';
 import { Bug } from '../../models/bug.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -38,6 +39,7 @@ export class BugDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bugsService: BugsService,
+    private bugService: BugService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
@@ -103,6 +105,36 @@ export class BugDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  upvote(bug: Bug): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    this.bugsService.upvoteBug(bug.id!).subscribe({
+      next: (updatedBug) => {
+        bug.voteCount = updatedBug.voteCount;
+      },
+      error: () => {
+        this.snackBar.open('Failed to upvote', 'Close', { duration: 2000 });
+      }
+    });
+  }
+
+  downvote(bug: Bug): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    this.bugsService.downvoteBug(bug.id!).subscribe({
+      next: (updatedBug) => {
+        bug.voteCount = updatedBug.voteCount;
+      },
+      error: () => {
+        this.snackBar.open('Failed to downvote', 'Close', { duration: 2000 });
+      }
+    });
   }
 
   canDeleteBug(): boolean {

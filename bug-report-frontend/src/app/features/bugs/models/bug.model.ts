@@ -4,7 +4,7 @@ import { Tag } from '../../../core/models/tag.model';
 
 export enum BugStatus {
   RECEIVED = 'RECEIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
+  IN_PROGRESS = 'IN PROGRESS',
   SOLVED = 'SOLVED'
 }
 
@@ -27,6 +27,7 @@ export interface Bug {
   tags?: Tag[];
   imageURL?: string;
   comments: Comment[];
+  voteCount?: number;
 }
 
 export interface BugFilter {

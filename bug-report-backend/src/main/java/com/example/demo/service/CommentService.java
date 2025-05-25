@@ -134,4 +134,24 @@ public class CommentService {
 
         return topLevelComments;
     }
+
+    public Comment likeComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        Users author = comment.getAuthor();
+        comment.setVoteCount(comment.getVoteCount() + 1);
+        author.setScore(author.getScore() + 5);
+        usersRepository.save(author);
+        return commentRepository.save(comment);
+    }
+    public Comment dislikeComment(Long id, Long voterId) {
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        Users author = comment.getAuthor();
+        Users voter = usersRepository.findById(voterId).orElseThrow();
+        comment.setVoteCount(comment.getVoteCount() - 1);
+        author.setScore((float)(author.getScore() - 2.5));
+        voter.setScore((float)(voter.getScore() - 1.5));
+        usersRepository.save(voter);
+        usersRepository.save(author);
+        return commentRepository.save(comment);
+    }
 }

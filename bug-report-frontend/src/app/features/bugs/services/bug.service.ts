@@ -59,4 +59,4 @@ export class BugService {
   downvoteBug(id: number): Observable<Bug> {
     return this.http.post<Bug>(`${this.apiUrl}/${id}/downvote`, {});
   }
-} 
+}

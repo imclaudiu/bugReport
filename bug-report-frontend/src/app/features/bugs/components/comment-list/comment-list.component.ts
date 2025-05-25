@@ -5,6 +5,8 @@ import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { User } from '../../../../core/models/user.model';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 // @ts-ignore
@@ -19,7 +21,8 @@ import {MatIcon} from '@angular/material/icon-module.d-BeibE7j0';
     CommonModule,
     MatButtonModule,
     MatSnackBarModule,
-    CommentFormComponent
+    CommentFormComponent,
+    MatIconModule
   ]
 })
 export class CommentListComponent implements OnInit {
@@ -188,5 +191,47 @@ export class CommentListComponent implements OnInit {
 
   onCancelEdit(): void {
     this.editingComment = null;
+  }
+
+  like(comment: Comment): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    this.commentService.likeComment(comment.id).subscribe({
+      next: (updatedComment) => {
+        if (updatedComment) {
+          comment.voteCount = updatedComment.voteCount;
+        } else {
+          this.snackBar.open('Failed to update vote count', 'Close', { duration: 2000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Failed to upvote', 'Close', { duration: 2000 });
+      }
+    });
+  }
+
+  dislike(comment: Comment): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    // @ts-ignore
+    const userId = this.authService.getCurrentUser().id;
+    console.log('Dislike voterId:', userId);
+    // @ts-ignore
+    this.commentService.dislikeComment(comment.id, userId).subscribe({
+      next: (updatedComment) => {
+        if (updatedComment) {
+          comment.voteCount = updatedComment.voteCount;
+        } else {
+          this.snackBar.open('Failed to update vote count', 'Close', { duration: 2000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Failed to downvote', 'Close', { duration: 2000 });
+      }
+    });
   }
 }

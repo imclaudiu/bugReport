@@ -44,6 +44,14 @@ export class BugsService {
     return this.http.get<Bug[]>(`${this.apiUrl}/search/title`, { params: { title } });
   }
 
+  upvoteBug(id: number): Observable<Bug> {
+    return this.http.put<Bug>(`${this.apiUrl}/${id}/upvote`, {});
+  }
+
+  downvoteBug(id: number): Observable<Bug> {
+    return this.http.put<Bug>(`${this.apiUrl}/${id}/downvote`, {});
+  }
+
   // Filter bugs by user
   getBugsByUser(userId: number): Observable<Bug[]> {
     return this.http.get<Bug[]>(`${this.apiUrl}/search/user/${userId}`);
@@ -60,7 +68,7 @@ export class BugsService {
     if (title) params.title = title;
     if (userId) params.userId = userId;
     if (tagName) params.tagName = tagName;
-    
+
     return this.http.get<Bug[]>(`${this.apiUrl}/search`, { params }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error filtering bugs:', error);
@@ -68,4 +76,4 @@ export class BugsService {
       })
     );
   }
-} 
+}

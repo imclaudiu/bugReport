@@ -94,4 +94,11 @@ export class CommentService {
   deleteComment(commentId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/deleteComment/${commentId}`, { observe: 'response' });
   }
+  likeComment(commentId: number): Observable<Comment> {
+    return this.http.put<Comment>(`${this.apiUrl}/likeComment/${commentId}`, {});
+  }
+
+  dislikeComment(commentId: number, voterId: number): Observable<Comment> {
+    return this.http.put<Comment>(`${this.apiUrl}/dislikeComment/${commentId}/voter/${voterId}`, {});
+  }
 }

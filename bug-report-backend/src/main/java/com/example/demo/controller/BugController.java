@@ -70,5 +70,14 @@ public class BugController {
     public List<Bug> searchByTag(@PathVariable String tagName) {
         return this.bugService.getBugsByTag(tagName);
     }
+
+    @PutMapping("/{bugId}/upvote")
+    public Bug upvoteBug(@PathVariable Long bugId) {
+        return this.bugService.upvoteBug(bugId);
+    }
+    @PutMapping("/{bugId}/downvote")
+    public Bug downvoteBug(@PathVariable Long bugId) {
+        return this.bugService.downvoteBug(bugId);
+    }
 }
 

@@ -40,8 +40,8 @@ export class BugListComponent implements OnInit {
   error: string | null = null;
   filterForm: FormGroup;
   availableTags: Tag[] = [
-    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' }, 
-    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' }, 
+    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' },
+    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' },
     { name: 'Bug' }, { name: 'Feature' }
   ];
 
@@ -61,7 +61,7 @@ export class BugListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBugs();
-    
+
     // Subscribe to form changes to trigger filtering
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();

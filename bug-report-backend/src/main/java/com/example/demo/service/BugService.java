@@ -2,15 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.entities.Bug;
 import com.example.demo.entities.Tag;
+import com.example.demo.entities.Users;
 import com.example.demo.repository.BugRepository;
 import com.example.demo.repository.TagRepository;
+import com.example.demo.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,8 @@ public class BugService {
 
     @Autowired
     private TagRepository tagRepository;
+    @Autowired
+    private UsersRepository userRepository;
 
     @Transactional
     public Bug addBug(Bug bug) {
@@ -152,5 +155,23 @@ public class BugService {
     // Get bugs by multiple criteria
     public List<Bug> filterBugs(String title, Long userId, String tagName) {
         return bugRepository.findByMultipleCriteria(title, userId, tagName);
+    }
+    public Bug upvoteBug(Long bugId) {
+        Bug bug = bugRepository.findById(bugId).orElseThrow();
+        Users author = bug.getAuthor();
+        bug.setVoteCount(bug.getVoteCount() + 1);
+        author.setScore((float)(author.getScore() + 2.5));
+        userRepository.save(author);
+        return bugRepository.save(bug);
+    }
+
+    public Bug downvoteBug(Long bugId) {
+        Bug bug = bugRepository.findById(bugId).orElseThrow();
+        Users author = bug.getAuthor();
+        bug.setVoteCount(bug.getVoteCount() - 1);
+        author.setScore((float)(author.getScore() - 1.5));
+        userRepository.save(author);
+        return bugRepository.save(bug);
+
     }
 }
