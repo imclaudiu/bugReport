@@ -99,4 +99,7 @@ public class VoteService {
     public List<Vote> getVotesByUserId(Long userId) {
         return voteRepository.findByUserId(userId);
     }
+
+
+
 }

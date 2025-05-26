@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Users;
+import com.example.demo.entities.Vote;
 import com.example.demo.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,11 @@ public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private SmsService smsService;
 
     public Users addUser(Users user) {
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
@@ -130,7 +134,22 @@ public class UsersService {
         }else {
             user.setBanned(true);
         }
-        return this.usersRepository.save(user);
+        Users savedUser = this.usersRepository.save(user);
+
+//        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+//            emailService.sendEmail(user.getEmail(),
+//                    "Salut!",
+//                    "Contul tău a fost suspendat de către moderatori. Pentru mai multe informații, contactează echipa de suport.");
+//        }
+
+        if (user.getPhone() != null && !user.getPhone().trim().isEmpty()) {
+            smsService.sendSms(
+                    user.getPhone(),
+                    "You have been banned from the platform."
+            );
+        }
+
+        return savedUser;
     }
     public Users unbanUser(Long id) {
         Users user = this.usersRepository.findById(id)
