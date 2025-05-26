@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/webUser/register","/users/**","/bug/**", "/comment/**", "/tag/**", "/api/**", "/auth/login") // ✅ Disable CSRF for these APIs
+                        .ignoringRequestMatchers("/webUser/register","/users/**","/bug/**", "/comment/**", "/tag/**", "/api/**", "/resetPass/**", "/auth/login") // ✅ Disable CSRF for these APIs
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll() // ✅ Allow public access
