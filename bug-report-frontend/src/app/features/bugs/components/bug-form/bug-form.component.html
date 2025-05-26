@@ -29,24 +29,33 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-option *ngFor="let status of statusOptions" [value]="status">
-                {{ status }}
-              </mat-option>
-            </mat-select>
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+              {{option.label}}
+            </mat-option>
+          </mat-select>
           <mat-error *ngIf="bugForm.get('status')?.hasError('required')">
             Status is required
           </mat-error>
-          </mat-form-field>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Image URL</mat-label>
+          <input matInput formControlName="imageURL" placeholder="Paste image URL">
+        </mat-form-field>
+
+        <div style="margin-top: 8px;">
+          <input type="file" accept="image/*" (change)="onFileSelected($event)">
+        </div>
 
         <div class="tags-section">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Tags</mat-label>
             <input matInput formControlName="tagInput" [matAutocomplete]="auto" placeholder="Add tags">
             <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let tag of availableTags" [value]="tag">
-                {{ tag }}
+              <mat-option *ngFor="let tag of availableTags" [value]="tag.name">
+                {{ tag.name }}
               </mat-option>
             </mat-autocomplete>
             <button matSuffix mat-icon-button (click)="addTag()" type="button">
@@ -54,19 +63,19 @@
             </button>
           </mat-form-field>
 
-          <mat-chip-grid>
-            <mat-chip-row *ngFor="let tag of tags" (removed)="removeTag(tag)">
-              {{ tag }}
+          <mat-chip-set>
+            <mat-chip-row *ngFor="let tag of selectedTags" (removed)="removeTag(tag)">
+              {{ tag.name }}
               <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
               </button>
             </mat-chip-row>
-          </mat-chip-grid>
+          </mat-chip-set>
         </div>
 
         <mat-card-actions align="end">
           <button mat-button type="button" (click)="onCancel()">Cancel</button>
-          <button mat-raised-button color="primary" 
+          <button mat-raised-button color="primary"
                   type="submit"
                   [disabled]="!bugForm.valid || isSubmitting">
             {{ isSubmitting ? 'Submitting...' : 'Submit' }}

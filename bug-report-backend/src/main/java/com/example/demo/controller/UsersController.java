@@ -53,4 +53,12 @@ public class UsersController {
     public boolean checkPass(@PathVariable String username, @PathVariable String password) {
         return this.usersService.checkPassword(username, password);
     }
+    @PutMapping("/banUser/{id}")
+    public Users banUser(@PathVariable Long id, @RequestBody Users user) {
+        return this.usersService.banUser(id);
+    }
+    @PutMapping("/unbanUser/{id}")
+    public Users unbanUser(@PathVariable Long id, @RequestBody Users user) {
+        return this.usersService.unbanUser(id);
+    }
 }

@@ -14,7 +14,7 @@ export class BugsService {
   constructor(private http: HttpClient) { }
 
   getAllBugs(): Observable<Bug[]> {
-    return this.http.get<Bug[]>(`${this.apiUrl}/getAllBugs`);
+    return this.http.get<Bug[]>(`${this.apiUrl}/sortByDate`);
   }
 
   getBugById(id: number): Observable<Bug> {
@@ -38,4 +38,42 @@ export class BugsService {
         })
       );
   }
-} 
+
+  // Filter bugs by title
+  searchBugsByTitle(title: string): Observable<Bug[]> {
+    return this.http.get<Bug[]>(`${this.apiUrl}/search/title`, { params: { title } });
+  }
+
+  upvoteBug(id: number): Observable<Bug> {
+    return this.http.put<Bug>(`${this.apiUrl}/${id}/upvote`, {});
+  }
+
+  downvoteBug(id: number): Observable<Bug> {
+    return this.http.put<Bug>(`${this.apiUrl}/${id}/downvote`, {});
+  }
+
+  // Filter bugs by user
+  getBugsByUser(userId: number): Observable<Bug[]> {
+    return this.http.get<Bug[]>(`${this.apiUrl}/search/user/${userId}`);
+  }
+
+  // Filter bugs by tag
+  getBugsByTag(tagName: string): Observable<Bug[]> {
+    return this.http.get<Bug[]>(`${this.apiUrl}/search/tag/${tagName}`);
+  }
+
+  // Filter bugs by multiple criteria
+  filterBugs(title?: string, userId?: number, tagName?: string): Observable<Bug[]> {
+    const params: any = {};
+    if (title) params.title = title;
+    if (userId) params.userId = userId;
+    if (tagName) params.tagName = tagName;
+
+    return this.http.get<Bug[]>(`${this.apiUrl}/search`, { params }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error filtering bugs:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+}

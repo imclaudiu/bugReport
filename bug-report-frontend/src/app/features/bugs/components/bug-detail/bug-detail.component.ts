@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BugsService } from '../../services/bugs.service';
+import { BugService } from '../../services/bug.service';
 import { Bug } from '../../models/bug.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -38,6 +39,7 @@ export class BugDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bugsService: BugsService,
+    private bugService: BugService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
@@ -80,9 +82,59 @@ export class BugDetailComponent implements OnInit {
     console.log('Checking edit permission:', {
       currentUserId: currentUser?.id,
       authorId: this.bug.author.id,
-      canEdit: currentUser?.id === this.bug.author.id
+      canEdit: currentUser?.id === this.bug.author.id || currentUser?.moderator
     });
-    return currentUser?.id === this.bug.author.id;
+    return currentUser?.id === this.bug.author.id || this.authService.isModerator();
+  }
+
+  isModerator(): boolean {
+    return this.authService.isModerator();
+  }
+
+  banUser(userId: number): void {
+    if (confirm('Are you sure you want to ban this user?')) {
+      this.authService.banUser(userId).subscribe({
+        next: () => {
+          this.snackBar.open('User banned successfully', 'Close', { duration: 3000 });
+          if (this.bug && this.bug.author && this.bug.author.id === userId) {
+            this.bug.author.banned = true;
+          }
+        },
+        error: () => {
+          this.snackBar.open('Failed to ban user', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  upvote(bug: Bug): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    this.bugsService.upvoteBug(bug.id!).subscribe({
+      next: (updatedBug) => {
+        bug.voteCount = updatedBug.voteCount;
+      },
+      error: () => {
+        this.snackBar.open('Failed to upvote', 'Close', { duration: 2000 });
+      }
+    });
+  }
+
+  downvote(bug: Bug): void {
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('You must be logged in to vote.', 'Close', { duration: 2000 });
+      return;
+    }
+    this.bugsService.downvoteBug(bug.id!).subscribe({
+      next: (updatedBug) => {
+        bug.voteCount = updatedBug.voteCount;
+      },
+      error: () => {
+        this.snackBar.open('Failed to downvote', 'Close', { duration: 2000 });
+      }
+    });
   }
 
   canDeleteBug(): boolean {
@@ -109,44 +161,54 @@ export class BugDetailComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Delete Bug Report',
-        message: 'Are you sure you want to delete this bug report? This action cannot be undone.'
-      }
-    });
+    if (confirm('Are you sure you want to delete this bug?')) {
+      this.bugsService.deleteBug(this.bug.id).subscribe({
+        next: () => {
+          this.snackBar.open('Bug deleted successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/bugs']);
+        },
+        error: (err) => {
+          console.error('Error deleting bug:', err);
+          this.snackBar.open('Failed to delete bug. Please try again.', 'Close', { duration: 5000 });
+        }
+      });
+    }
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && this.bug?.id) {
-        this.loading = true;
-        this.bugsService.deleteBug(this.bug.id as number).subscribe({
-          next: () => {
-            this.loading = false;
-            this.snackBar.open('Bug report deleted successfully', 'Close', { duration: 3000 });
-            this.router.navigate(['/bugs']);
-          },
-          error: (error) => {
-            this.loading = false;
-            console.error('Error deleting bug:', error);
-            if (error.status === 404) {
-              this.snackBar.open('Bug not found', 'Close', { duration: 3000 });
-            } else {
-              this.snackBar.open('Failed to delete bug report', 'Close', { duration: 3000 });
-            }
-          }
-        });
-      }
-    });
+  onReply(): void {
+    // Scroll to the comment section
+    const commentSection = document.querySelector('.comments-section');
+    if (commentSection) {
+      commentSection.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   getStatusColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'solved':
-        return 'primary';
-      case 'not solved':
+    switch (status) {
+      case 'RECEIVED':
         return 'warn';
-      default:
+      case 'IN PROGRESS':
+        return 'accent';
+      case 'SOLVED':
         return 'primary';
+      default:
+        return 'default';
     }
   }
-} 
+
+  unbanUser(id: number) {
+    if (confirm('Are you sure you want to unban this user?')) {
+      this.authService.unbanUser(id).subscribe({
+        next: () => {
+          this.snackBar.open('User unbanned successfully', 'Close', { duration: 3000 });
+          if (this.bug && this.bug.author && this.bug.author.id === id) {
+            this.bug.author.banned = false;
+          }
+        },
+        error: () => {
+          this.snackBar.open('Failed to unban user', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+}

@@ -1,13 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Users;
+import com.example.demo.entities.Vote;
 import com.example.demo.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,8 +25,11 @@ public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private SmsService smsService;
 
     public Users addUser(Users user) {
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
@@ -123,5 +125,40 @@ public class UsersService {
     public Users findByEmail(String email) {
         return this.usersRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+    public Users banUser(Long id) {
+        Users user = this.usersRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if(user.isModerator()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot ban a moderator");
+        }else {
+            user.setBanned(true);
+        }
+        Users savedUser = this.usersRepository.save(user);
+
+//        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+//            emailService.sendEmail(user.getEmail(),
+//                    "Salut!",
+//                    "Contul tău a fost suspendat de către moderatori. Pentru mai multe informații, contactează echipa de suport.");
+//        }
+
+        if (user.getPhone() != null && !user.getPhone().trim().isEmpty()) {
+            smsService.sendSms(
+                    user.getPhone(),
+                    "You have been banned from the platform."
+            );
+        }
+
+        return savedUser;
+    }
+    public Users unbanUser(Long id) {
+        Users user = this.usersRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if(user.isModerator()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot unban a moderator");
+        }else {
+            user.setBanned(false);
+        }
+        return this.usersRepository.save(user);
     }
 }

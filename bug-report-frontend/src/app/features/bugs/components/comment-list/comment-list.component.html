@@ -1,25 +1,25 @@
 <div class="comments-container">
   <h3>Comments</h3>
-  
+
   <!-- Add Comment Form -->
   <app-comment-form
     [bugId]="bugId"
     (commentSaved)="onCommentSaved($event)"
   ></app-comment-form>
-  
+
   <div *ngIf="loading" class="loading">
     Loading comments...
   </div>
-  
+
   <div *ngIf="error" class="error">
     {{ error }}
   </div>
-  
+
   <div *ngIf="!loading && !error">
     <div *ngIf="comments.length === 0" class="no-comments">
       No comments yet. Be the first to comment!
     </div>
-    
+
     <div *ngFor="let comment of comments" class="comment">
       <div *ngIf="editingComment?.id === comment.id; else commentView">
         <app-comment-form
@@ -29,17 +29,47 @@
           (cancel)="onCancelEdit()"
         ></app-comment-form>
       </div>
-      
+
       <ng-template #commentView>
         <div class="comment-header">
-          <span class="author">{{ comment.author.username }}</span>
+          <span class="author">{{ comment.author.username }}
+
+            <button *ngIf="isModerator() && !comment.author.banned" mat-icon-button color="warn" (click)="banUser(comment.author.id)">
+              block
+            </button>
+            <span *ngIf="comment.author.banned" class="banned-label">(Banned)</span>
+            <button *ngIf="isModerator() && comment.author.banned" mat-icon-button color="primary" (click)="unbanUser(comment.author.id)">
+              check_circle </button>
+          </span>
+          <span class="reply">
+            <button mat-button (click)="showReplyForm(comment.id)">Reply</button>
+          </span>
+          <div class="comment-score" *ngIf="!comment.author.banned">
+            <span class="score-label">Score:</span>
+            <span class="score-value">{{ comment.author.score }}</span>
+          </div>
+
+          <div class="vote-actions">
+            <button mat-icon-button (click)="like(comment)">
+              <mat-icon>thumb_up</mat-icon>
+            </button>
+            <span>{{ comment.voteCount }}</span>
+            <button mat-icon-button (click)="dislike(comment)">
+              <mat-icon>thumb_down</mat-icon>
+            </button>
+          </div>
+
           <span class="date">{{ comment.date | date:'medium' }}</span>
         </div>
-        
+
         <div class="comment-content">
           {{ comment.text }}
         </div>
-        
+
+
+        <div *ngIf="comment.imageURL">
+          <img [src]="comment.imageURL" alt="Comment image" style="max-width: 100%; margin-top: 0.5rem;">
+        </div>
         <div class="comment-actions" *ngIf="canEdit(comment) || canDelete(comment)">
           <button mat-button color="primary" *ngIf="canEdit(comment)" (click)="editComment(comment)">
             Edit
@@ -47,8 +77,41 @@
           <button mat-button color="warn" *ngIf="canDelete(comment)" (click)="deleteComment(comment)">
             Delete
           </button>
+
+
+
+        </div>
+
+        <app-comment-form
+          *ngIf="replyingToCommentId === comment.id"
+          [bugId]="bugId"
+          [parentId]="comment.id"
+          (commentSaved)="onReplySaved($event, comment)"
+          (cancel)="cancelReply()"
+        ></app-comment-form>
+
+        <div class="replies" *ngIf="comment.replies?.length">
+          <div *ngFor="let reply of comment.replies" class="reply">
+            <div class="comment-header">
+              <span class="author">{{ reply.author.username }}</span>
+              <span class="date">{{ reply.date | date:'medium' }}</span>
+            </div>
+            <div class="comment-content">{{ reply.text }}</div>
+            <div *ngIf="reply.imageURL" class="comment-image">
+              <img [src]="reply.imageURL" alt="Reply image" style="max-width: 100%; margin-top: 0.5rem;">
+            </div>
+            <div class="comment-actions" *ngIf="canEdit(reply) || canDelete(reply)">
+              <button mat-button color="primary" *ngIf="canEdit(reply)" (click)="editComment(reply)">
+                Edit
+              </button>
+              <button mat-button color="warn" *ngIf="canDelete(reply)" (click)="deleteComment(reply)">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       </ng-template>
+
     </div>
   </div>
-</div> 
+</div>

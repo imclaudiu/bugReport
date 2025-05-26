@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BugsService } from '../../services/bugs.service';
-import { Bug } from '../../models/bug.model';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +10,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Bug } from '../../models/bug.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { Tag } from '../../../../core/models/tag.model';
 
 @Component({
   selector: 'app-bug-form',
@@ -40,15 +39,23 @@ export class BugFormComponent implements OnInit {
   @Input() bug?: Bug;
   @Output() submitForm = new EventEmitter<Bug>();
   @Output() cancel = new EventEmitter<void>();
-  
+
   bugForm: FormGroup;
   loading = false;
   isSubmitting = false;
   error: string | null = null;
-  
-  statusOptions = ['NOT SOLVED', 'SOLVED'];
-  availableTags: string[] = ['UI', 'Backend', 'Frontend', 'Database', 'Security', 'Performance', 'Bug', 'Feature'];
-  tags: string[] = [];
+
+  statusOptions = [
+    { value: 'RECEIVED', label: 'RECEIVED' },
+    { value: 'IN PROGRESS', label: 'IN PROGRESS' },
+    { value: 'SOLVED', label: 'SOLVED' }
+  ];
+  availableTags: Tag[] = [
+    { name: 'UI' }, { name: 'Backend' }, { name: 'Frontend' },
+    { name: 'Database' }, { name: 'Security' }, { name: 'Performance' },
+    { name: 'Bug' }, { name: 'Feature' }
+  ];
+  selectedTags: Tag[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -58,9 +65,10 @@ export class BugFormComponent implements OnInit {
     this.bugForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      status: ['NOT SOLVED', Validators.required],
+      status: ['RECEIVED', Validators.required],
       assignedTo: [null],
-      tagInput: ['']
+      tagInput: [''],
+      imageURL: ['']
     });
   }
 
@@ -72,7 +80,20 @@ export class BugFormComponent implements OnInit {
         status: this.bug.status,
         assignedTo: this.bug.assignedTo
       });
-      this.tags = this.bug.tags || [];
+      this.selectedTags = this.bug.tags || [];
+    }
+  }
+
+  // In your component
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.bugForm.get('imageURL')?.setValue(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -80,10 +101,10 @@ export class BugFormComponent implements OnInit {
     if (this.bugForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       this.error = null;
-      
+
       const formValue = this.bugForm.value;
       const currentUser = this.authService.getCurrentUser();
-      
+
       if (!currentUser) {
         this.snackBar.open('User information not found. Please log in again.', 'Close', { duration: 3000 });
         this.isSubmitting = false;
@@ -96,9 +117,9 @@ export class BugFormComponent implements OnInit {
         creationDate: this.bug?.creationDate || new Date(),
         updatedAt: new Date(),
         author: this.bug?.author || { id: currentUser.id },
-        tags: this.tags
+        tags: this.selectedTags
       };
-      
+
       this.submitForm.emit(bug);
     }
   }
@@ -109,14 +130,20 @@ export class BugFormComponent implements OnInit {
 
   addTag(): void {
     const tagInput = this.bugForm.get('tagInput')?.value?.trim();
-    if (tagInput && !this.tags.includes(tagInput)) {
-      this.tags.push(tagInput);
-      this.bugForm.get('tagInput')?.setValue('');
+    if (tagInput) {
+      const newTag: Tag = { name: tagInput };
+      if (!this.selectedTags.some(tag => tag.name === tagInput)) {
+        this.selectedTags.push(newTag);
+        if (!this.availableTags.some(tag => tag.name === tagInput)) {
+          this.availableTags.push(newTag);
+        }
+        this.bugForm.get('tagInput')?.setValue('');
+      }
     }
   }
 
-  removeTag(tag: string): void {
-    this.tags = this.tags.filter(t => t !== tag);
+  removeTag(tag: Tag): void {
+    this.selectedTags = this.selectedTags.filter(t => t.name !== tag.name);
   }
 
   getErrorMessage(controlName: string): string {
@@ -130,4 +157,4 @@ export class BugFormComponent implements OnInit {
     }
     return '';
   }
-} 
+}

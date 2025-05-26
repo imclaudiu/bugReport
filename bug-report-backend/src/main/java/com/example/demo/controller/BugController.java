@@ -48,5 +48,36 @@ public class BugController {
         return this.bugService.getAllBugsSortedByDate();
     }
 
+    @GetMapping("/search")
+    public List<Bug> searchBugs(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String tagName) {
+        return this.bugService.filterBugs(title, userId, tagName);
+    }
+
+    @GetMapping("/search/title")
+    public List<Bug> searchByTitle(@RequestParam String title) {
+        return this.bugService.searchBugsByTitle(title);
+    }
+
+    @GetMapping("/search/user/{userId}")
+    public List<Bug> searchByUser(@PathVariable Long userId) {
+        return this.bugService.getBugsByUser(userId);
+    }
+
+    @GetMapping("/search/tag/{tagName}")
+    public List<Bug> searchByTag(@PathVariable String tagName) {
+        return this.bugService.getBugsByTag(tagName);
+    }
+
+    @PutMapping("/{bugId}/upvote")
+    public Bug upvoteBug(@PathVariable Long bugId) {
+        return this.bugService.upvoteBug(bugId);
+    }
+    @PutMapping("/{bugId}/downvote")
+    public Bug downvoteBug(@PathVariable Long bugId) {
+        return this.bugService.downvoteBug(bugId);
+    }
 }
 

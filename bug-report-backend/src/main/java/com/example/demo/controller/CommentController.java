@@ -5,7 +5,9 @@ import com.example.demo.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Clasa de control al commenturilor. In aceasta clasa se apeleaza serviciile entitatilor.
@@ -18,6 +20,11 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+
+    @PostMapping("/addReply")
+    public Comment addReply(@RequestBody Comment comment) {
+        return this.commentService.addComment(comment);
+    }
 
     @PostMapping("/addComment")
     public Comment addComment(@RequestBody Comment comment) {
@@ -45,8 +52,19 @@ public class CommentController {
     }
 
     @DeleteMapping("/deleteComment/{id}")
-    public String deleteComment(@PathVariable Long id) {
-        return commentService.deleteComment(id);
+    public Map<String, String> deleteComment(@PathVariable Long id) {
+        String message = commentService.deleteComment(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", message);
+        return response;
+    }
+    @PutMapping("/likeComment/{id}")
+    public Comment likeComment(@PathVariable Long id) {
+        return commentService.likeComment(id);
+    }
+    @PutMapping("/dislikeComment/{commentId}/voter/{voterId}")
+    public Comment dislikeComment(@PathVariable Long commentId, @PathVariable Long voterId) {
+        return commentService.dislikeComment(commentId, voterId);
     }
 }
 

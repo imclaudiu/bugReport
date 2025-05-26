@@ -12,7 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * In clasa CommentService a fost implementata logica pentru adaugarea, preluarea, updatarea,
@@ -31,7 +36,6 @@ public class CommentService {
 
     @Autowired
     private UsersRepository usersRepository;
-
     @Transactional
     public Comment addComment(Comment comment) {
         Bug bug = bugRepository.findById(comment.getBug().getId()).orElse(null);
@@ -48,12 +52,17 @@ public class CommentService {
 
         if (comment.getParent() != null && comment.getParent().getId() != null) {
             Comment parent = commentRepository.findById(comment.getParent().getId())
-                    .orElseThrow(() -> new RuntimeException("Parent comment not found for ID: " + comment.getParent().getId()));
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found!"));
             comment.setParent(parent);
+        }
+
+        if (comment.getDate() == null) {
+            comment.setDate(ZonedDateTime.now());
         }
 
         return commentRepository.save(comment);
     }
+
 
 
     public Comment findById(Long id) {
@@ -103,7 +112,46 @@ public class CommentService {
     }
 
     public List<Comment> findByBugId(Long bugId) {
-        return commentRepository.findByBugId(bugId);
+        List<Comment> allComments = commentRepository.findByBugId(bugId);
+        Map<Long, Comment> commentMap = new HashMap<>();
+        List<Comment> topLevelComments = new ArrayList<>();
+
+        for (Comment comment : allComments) {
+            comment.setReplies(new ArrayList<>()); // Ensure replies list is initialized
+            commentMap.put(comment.getId(), comment);
+        }
+
+        for (Comment comment : allComments) {
+            if (comment.getParent() != null && comment.getParent().getId() != null) {
+                Comment parent = commentMap.get(comment.getParent().getId());
+                if (parent != null) {
+                    parent.getReplies().add(comment);
+                }
+            } else {
+                topLevelComments.add(comment);
+            }
+        }
+
+        return topLevelComments;
     }
 
+    public Comment likeComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        Users author = comment.getAuthor();
+        comment.setVoteCount(comment.getVoteCount() + 1);
+        author.setScore(author.getScore() + 5);
+        usersRepository.save(author);
+        return commentRepository.save(comment);
+    }
+    public Comment dislikeComment(Long id, Long voterId) {
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        Users author = comment.getAuthor();
+        Users voter = usersRepository.findById(voterId).orElseThrow();
+        comment.setVoteCount(comment.getVoteCount() - 1);
+        author.setScore((float)(author.getScore() - 2.5));
+        voter.setScore((float)(voter.getScore() - 1.5));
+        usersRepository.save(voter);
+        usersRepository.save(author);
+        return commentRepository.save(comment);
+    }
 }

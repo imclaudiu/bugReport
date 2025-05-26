@@ -12,6 +12,15 @@
     </mat-error>
   </mat-form-field>
 
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Image URL</mat-label>
+    <input matInput formControlName="imageURL" placeholder="Paste image URL">
+  </mat-form-field>
+
+  <div style="margin-top: 8px;">
+    <input type="file" accept="image/*" (change)="onFileSelected($event)">
+  </div>
+
   <div class="form-actions">
     <button
       mat-button
@@ -34,4 +43,4 @@
   <div *ngIf="error" class="error">
     {{ error }}
   </div>
-</form> 
+</form>

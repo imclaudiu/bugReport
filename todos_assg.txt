@@ -1,0 +1,16 @@
+taguri creare + afisare la fiecare BUG - next
+progress
+date and time - ✅️
+
+sort by creation date       ✅️
+filtrare prin taguri        
+rezolvare creeare de buguri ✅️
+pictures                    SA MA BATA DUMNEZEU, A MERS ✅️
+reply comments              MERGE ✅️
+
+upvote si downvotes         incercat, o sa mai incerc
+sortare dupa upvotes        intai sa fac aia anterior
+
+
+filtrare, afisare tag + creeare, sortByDate, date?, search box, reply la alt cont decat cel care a creeat comment
+                                    ✅️        ✅️                        ✅️

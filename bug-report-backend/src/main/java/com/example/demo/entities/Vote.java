@@ -13,19 +13,29 @@ public class Vote {
     @JoinColumn(name = "userId", nullable = false)
     private Users user;
 
-    @Column(name = "targetId")
+    @Column(name = "targetId", nullable = false)
     private int targetId;
 
-    @Column(name = "voteType")
-    private String voteType;
+    @Column(name = "targetType", nullable = false)
+    private String targetType; // "BUG" sau "COMMENT"
 
-    public Vote(Long id, Users user, int targetId, String voteType) {
+    @Column(name = "voteType", nullable = false)
+    private String voteType; // "UPVOTE" sau "DOWNVOTE"
+
+    public Vote(Long id, Users user, int targetId, String voteType, String targetType) {
         this.id = id;
         this.user = user;
         this.targetId = targetId;
         if(voteType.equals("UPVOTE") || voteType.equals("DOWNVOTE"))
             this.voteType = voteType;
         else throw new IllegalArgumentException("voteType must be UPVOTE or DOWNVOTE");
+
+        if(targetType.equals("BUG") || targetType.equals("COMMENT")){
+            this.targetType = targetType;
+        }
+        else{
+            throw new IllegalArgumentException("targetType must be BUG or COMMENT");
+        }
 
     }
     public Vote(){}
@@ -56,6 +66,14 @@ public class Vote {
 
     public String getVoteType() {
         return voteType;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
     }
 
     public void setVoteType(String voteType) {

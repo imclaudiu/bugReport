@@ -149,7 +149,7 @@ export class AuthService extends BaseService {
         const expirationDate = new Date(new Date().getTime() + response.expiresIn * 1000);
         this.setToken(response.token);
         localStorage.setItem(this.TOKEN_EXPIRATION_KEY, expirationDate.toISOString());
-        
+
         // Store the user data with proper field mapping
         const userData = {
             id: response.user.id,
@@ -193,4 +193,12 @@ export class AuthService extends BaseService {
                 }
             });
     }
-} 
+
+  banUser(userId: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/users/banUser/${userId}`, {}, { headers: this.getHeaders() });
+  }
+
+  unbanUser(id: number) {
+    return this.http.put<void>(`${this.baseUrl}/users/unbanUser/${id}`, {}, { headers: this.getHeaders() });
+  }
+}
